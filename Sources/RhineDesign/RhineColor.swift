@@ -1,15 +1,15 @@
-import SwiftUI
 import UIKit
 
 /// Semantic colors follow the host's system appearance and accessibility traits.
+@MainActor
 public enum RhineColor {
-    public static var textPrimary: Color { Color(uiColor: .label) }
-    public static var textSecondary: Color { Color(uiColor: .secondaryLabel) }
-    public static var canvas: Color { Color(uiColor: .systemBackground) }
-    public static var group: Color { Color(uiColor: .systemGroupedBackground) }
-    public static var separator: Color { Color(uiColor: .separator) }
-    public static var error: Color { Color(uiColor: .systemRed) }
+    public static var textPrimary: UIColor { .label }
+    public static var textSecondary: UIColor { .secondaryLabel }
+    public static var canvas: UIColor { .systemBackground }
+    public static var group: UIColor { .systemGroupedBackground }
+    public static var separator: UIColor { .separator }
+    public static var error: UIColor { .systemRed }
 
-    /// Resolves the host's `.tint(...)`; no independent hard-coded brand color.
-    public static var accent: TintShapeStyle { .tint }
+    /// Resolve at the point of use; never cache a host's tint globally.
+    public static func accent(in view: UIView) -> UIColor { view.tintColor }
 }

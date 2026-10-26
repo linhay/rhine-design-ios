@@ -2,10 +2,13 @@ import XCTest
 
 @MainActor
 final class FoundationConsumptionTests: XCTestCase {
-    func testPublicPackageGalleryRemainsReadableAndScrollable() {
+    func testUIKitGalleryShowsContentAndScrollsToEnd() {
         let app = XCUIApplication()
         app.launch()
-        XCTAssertTrue(app.staticTexts["Independent iOS foundations"].waitForExistence(timeout: 10))
+        guard app.staticTexts["Independent UIKit foundations"].waitForExistence(timeout: 30) else {
+            XCTFail("The UIKit gallery did not reach its initial screen.")
+            return
+        }
 
         let supporting = app.staticTexts["Supporting · 合成说明"]
         for _ in 0..<16 {

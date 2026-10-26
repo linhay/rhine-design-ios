@@ -9,9 +9,10 @@
 /* Begin PBXBuildFile section */
 		00617FA8569668B5DD676128 /* RhineDesign in Frameworks */ = {isa = PBXBuildFile; productRef = E22B7E78561C375E07ECD461 /* RhineDesign */; };
 		3C916D51878979CA24CF87CD /* NativeColorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FEE85AC039711A43836A642 /* NativeColorTests.swift */; };
+		9C915FD4295A0DDA252DDBE8 /* FoundationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9933EE68DF800FC158E25AD6 /* FoundationViewController.swift */; };
 		C3284D4C8D7CF5D159258EA6 /* FoundationConsumptionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73C0018EBC9A32D19EF60ADC /* FoundationConsumptionTests.swift */; };
 		CA933A3C96DB82A1506CAAD9 /* RhineDesign in Frameworks */ = {isa = PBXBuildFile; productRef = 48FFCD56CCF7373923FF7103 /* RhineDesign */; };
-		ED114AB753DE53126C29D0ED /* RhineExampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAB7C025F28FC937F381CC88 /* RhineExampleApp.swift */; };
+		E36CE4E5BF7FF169257FC791 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC45F37B6440A96EE5C79501 /* AppDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -29,9 +30,10 @@
 		73C0018EBC9A32D19EF60ADC /* FoundationConsumptionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoundationConsumptionTests.swift; sourceTree = "<group>"; };
 		8B23822B0D77FC020AEF702D /* RhineDesignTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = RhineDesignTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8FEE85AC039711A43836A642 /* NativeColorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeColorTests.swift; sourceTree = "<group>"; };
+		9933EE68DF800FC158E25AD6 /* FoundationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoundationViewController.swift; sourceTree = "<group>"; };
 		CEF31E97B6AF1D6E213DC84B /* rhine-design-ios */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "rhine-design-ios"; path = ..; sourceTree = SOURCE_ROOT; };
-		DAB7C025F28FC937F381CC88 /* RhineExampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RhineExampleApp.swift; sourceTree = "<group>"; };
 		F835FB40464254B5A7010406 /* RhineExampleUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = RhineExampleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		FC45F37B6440A96EE5C79501 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,7 +96,8 @@
 		EC9DE3DE85E76EA32ECE86D2 /* RhineExample */ = {
 			isa = PBXGroup;
 			children = (
-				DAB7C025F28FC937F381CC88 /* RhineExampleApp.swift */,
+				FC45F37B6440A96EE5C79501 /* AppDelegate.swift */,
+				9933EE68DF800FC158E25AD6 /* FoundationViewController.swift */,
 			);
 			path = RhineExample;
 			sourceTree = "<group>";
@@ -226,7 +229,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				ED114AB753DE53126C29D0ED /* RhineExampleApp.swift in Sources */,
+				E36CE4E5BF7FF169257FC791 /* AppDelegate.swift in Sources */,
+				9C915FD4295A0DDA252DDBE8 /* FoundationViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
