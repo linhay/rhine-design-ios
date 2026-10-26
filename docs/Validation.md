@@ -1,34 +1,19 @@
 # 验收计划与结果
 
+> 当前主框架为 **UIKit**，依据[用户明确纠正](https://github.com/linhay/rhine-design/issues/34#issuecomment-6419860390)（2026-10-26）。此前 SwiftUI 主方案及其控件映射已被取代；SwiftUI 只可作为未来另行评估的可选消费适配，不是首批依赖。
+
 确认依据：[方案 v1](https://github.com/linhay/rhine-design/issues/34#issuecomment-6410947901) 与 [维护者确认](https://github.com/linhay/rhine-design/issues/34#issuecomment-6410983498)，2026-10-26。设计规则已确认；实现和运行验收状态另见 [Validation](Validation.md)。
 
 ## 当前状态
 
-规范审阅完成；#35 的基础包与合成样例已有候选实现，以下记录仅适用于 foundations，不代表 #36 组件通过。目标最低系统 17.0 不等于已经验证支持。
-
-### 2026-10-26 基础链路检查
-
-构建工具：Xcode 27.1（27A9275）、Swift 6.4 编译器、Swift 6 模式。Package 的 deployment target 为 iOS17.0，manifest tools-version 为6.0；无第三方运行时依赖、无资源文件、无网络接口、无真实数据。
-
-| 检查 | 实际结果 | 限制 |
-| --- | --- | --- |
-| iPhone Duo / iOS27.1 | 原生 build/install/launch 成功；2项颜色适配测试 + 1项公开消费/滚动可达性UI测试通过 | 早期截图捕获为黑屏，未作为可视验收证据；后续使用原生XCTest验证标题出现及滚动到末项。 |
-| iPhone SE（第3代）/ iOS27.0 | 原生构建运行成功，375pt竖屏浅色标准字号截图实看；启动前设置系统深色、提高对比度和 accessibility5 后，3项测试通过 | 尚未独立断言App收到这些设置；测试只验证元素出现和滚动可达，不证明无截断/重叠、字号正确或完整可读；未覆盖横屏及所有组合。 |
-| iPad（A16）/ iPadOS27.0 | 原生构建运行成功，全屏竖屏浅色标准字号截图实看，3项测试通过 | 未覆盖横屏、多任务窄窗；当前安装的27.1运行时未提供所需iPad目标，不能将27.0结果写成27.1通过。 |
-| iPadOS27.1 必需矩阵 | **未验证，阻塞#35完成** | 当前安装的27.1运行时未提供所需iPad目标；27.0仅为补充证据，不能替代已确认矩阵。 |
-| 语义颜色适配 | 公开Color经UIKit解析，在浅/深色 × 标准/提高对比度下保持对应系统动态颜色；背景确实随外观变化 | 共6种颜色的24组解析比较；不是完整对比度或真实VoiceOver验收。 |
-| 最低iOS/iPadOS17.0 | **未验证，阻塞#35完成** | 官方下载命令分别尝试arm64与默认架构，均返回17.0不可下载；不能静默抬高下限。需可用17.0运行时或受支持设备。 |
-| 减少动态/减少透明度 | 样例已读取系统环境，默认关闭值可见 | 开/关实际验证未完成；静态代码不能替代运行证据。 |
-| 真机与VoiceOver | 未验证 | 属于后续必要证据，尤其#36实际辅助技术验收；自动UI测试不替代。 |
-
-原生XCTest使用公开包入口；UI测试在真实Simulator中等待标题出现并滚动到最后一个文字角色。通用辅助树工具因工具环境缺少所需框架不可用，已采用原生XCTest执行有界检查，未把工具失败记为通过。截图仅在本地审阅，未上传未经完整媒体审计的附件。当前#35仍开放，#36等待必要前置验收。
+UIKit规范按用户纠正更新；UIKit候选原生构建、运行和组件验收须重新记录。旧SwiftUI候选结果不可当作UIKit通过。目标最低系统 17.0 不等于已经验证支持。
 
 ## 已确认矩阵
 
 | 编号 | 覆盖与预期 |
 | --- | --- |
 | P01 平台 | 在 iOS 17.0、iPadOS 17.0 与 iOS/iPadOS 27.1 上分别构建并运行同一公开 Package 样例；固定 Xcode 27.1。每一端均记录实际 runtime 版本，不用27.1通过替代17.0证据。旧 runtime 获取困难记为阻塞，不能静默抬高下限或冒称验证完成。 |
-| A01 布局 | 每个平台在默认 `.large` 字号运行核心场景；最新系统补 `.xxxLarge`、`.accessibility3`、`.accessibility5`。iPhone 375pt窄屏与常规宽屏、横竖屏；iPad全屏横竖屏和实际可用最窄多任务窗口，另以320pt内容容器测窄布局。记录实际point尺寸，不把容器测试当设备验证。长中英文、长错误、键盘出现均可阅读/操作。 |
+| A01 布局 | 每个平台在默认 UIContentSizeCategory.large 字号运行核心场景；最新系统补 UIContentSizeCategory.extraExtraExtraLarge、UIContentSizeCategory.accessibilityExtraLarge、UIContentSizeCategory.accessibilityExtraExtraExtraLarge。iPhone 375pt窄屏与常规宽屏、横竖屏；iPad全屏横竖屏和实际可用最窄多任务窗口，另以320pt内容容器测窄布局。记录实际point尺寸，不把容器测试当设备验证。长中英文、长错误、键盘出现均可阅读/操作。 |
 | 外观 | 最低与较新系统均浅/深色、标准对比度；较新系统补浅/深色 × 提高对比度，并开关减少透明度核对内容可读，大字体 + 窄容器 + 深色组合。动态文本颜色不丢失，错误不只靠颜色，关键动作可识别；若使用自定义 accent，完整补同矩阵。 |
 | B01/B02 | 合成任务手动触发完成与失败；忙碌期间快速重复点击/辅助激活不重复调用，禁用零调用；破坏性role与名称可理解，无通用强制确认。回调计数证据与实际触屏证据分别记录。 |
 | F01/F02 | 空必填、错误格式、修正重提、长错误、失败后草稿保留；Next/Done、离散选择草稿、键盘遮挡、脏草稿继续/放弃、成功关闭与归焦。合成规则不变成库内业务规则；提交期间不重复保存、不退出丢草稿。 |
@@ -42,14 +27,6 @@
 
 只使用合成数据；日志、截图、录屏和附件内容及元数据分别脱敏。记录工具链、OS、通用型号、尺寸、相对路径与公开修订；不包含凭据、内部地址、本机路径、设备标识或私人消费工程信息。
 
-### 候选修订与测试名称
+## 历史记录：已被替代的 SwiftUI 候选
 
-上述运行绑定候选源码 [`6811f67`](https://github.com/linhay/rhine-design-ios/commit/6811f67)。每个设备的完整一次测试均为3通过、0失败、0跳过：
-
-- `NativeColorTests.testPublicColorsRetainNativeTraitAdaptation`：原生trait解析。
-- `NativeColorTests.testCanvasActuallyChangesBetweenLightAndDark`：浅深色背景差异。
-- `FoundationConsumptionTests.testPublicPackageGalleryRemainsReadableAndScrollable`：仅断言标题出现、末项可命中、标签存在，不证明完整可读性。
-
-原始xcresult保留在本地忽略目录；此文是脱敏运行摘要，不上传原始日志/设备标识。设计资料侧只读复核了规范和测试范围，未独立复跑测试。
-
-干净源码复核：将 `6811f67` 用 `git archive` 导出到全新目录，使用全新 DerivedData，从其自身相对 Package reference 构建和运行测试；iPhone SE（第3代）/ iOS27.0 下3项全部通过、无跳过。后续修订仅补文档中的证据边界与链接，原生实现/工程/测试源码未变。本检查证明归档可构建与公开入口消费，不补齐上述17.0、iPadOS27.1或完整可访问性缺口。
+此前6811f67及文档8bae4e6使用SwiftUI；其3种模拟器环境各3项测试和干净归档复验只属于该旧候选，**不计入UIKit当前验收**。完整历史记录可在[旧修订](https://github.com/linhay/rhine-design-ios/blob/8bae4e6/docs/Validation.md)查看。UIKit候选结果在下文另行记录。

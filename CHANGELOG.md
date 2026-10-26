@@ -2,6 +2,8 @@
 
 ## Unreleased — 0.1.0 target
 
+- Correct the primary framework to UIKit following the maintainer's explicit direction; the former SwiftUI-first proposal is superseded.
+
 - Confirm independent iOS design rules, platform baseline, semantic tokens and first component contracts in [#34](https://github.com/linhay/rhine-design/issues/34).
 - Add native semantic colors, text styles, composition spacing and minimum custom hit-target size in a single Swift Package, plus a synthetic iPhone/iPad example consuming its public product ([#35](https://github.com/linhay/rhine-design/issues/35)).
 - Add native color trait tests and a Simulator UI consumption/scrolling check. Minimum-system and full accessibility validation remain incomplete.

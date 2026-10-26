@@ -1,6 +1,8 @@
 # Rhine Design for iOS
 
-独立的 SwiftUI 设计体系与原生组件库。规范、tokens、样例、版本和验收均独立于 [Rhine Design Web](https://github.com/linhay/rhine-design)。
+> 当前主框架为 **UIKit**，依据[用户明确纠正](https://github.com/linhay/rhine-design/issues/34#issuecomment-6419860390)（2026-10-26）。此前 SwiftUI 主方案及其控件映射已被取代；SwiftUI 只可作为未来另行评估的可选消费适配，不是首批依赖。
+
+独立的 UIKit 设计体系与原生组件库。规范、tokens、样例、版本和验收均独立于 [Rhine Design Web](https://github.com/linhay/rhine-design)。
 
 ## 状态
 
@@ -39,16 +41,18 @@ xcodebuild -project Examples/RhineExample.xcodeproj -scheme RhineExample \
 公开入口：`RhineColor`、`RhineTypography`、`RhineSpacing`、`RhineTarget`。例如：
 
 ```swift
-import SwiftUI
+import UIKit
 import RhineDesign
 
-Text("Synthetic example")
-    .font(RhineTypography.body)
-    .foregroundStyle(RhineColor.textPrimary)
-    .padding(RhineSpacing.page)
+let label = UILabel()
+label.text = "Synthetic example"
+label.font = RhineTypography.font(.body, compatibleWith: label.traitCollection)
+label.adjustsFontForContentSizeCategory = true
+label.numberOfLines = 0
+label.textColor = RhineColor.textPrimary
 ```
 
-`RhineColor.accent` 使用宿主系统 tint；需要品牌覆盖时由宿主设置 `.tint(...)` 并验证对比度。系统 Reduce Motion / Reduce Transparency 等环境值在样例中实时读取；本阶段没有自定义动画或外部资源，不创建空资源包。
+`RhineColor.accent(in:)` 读取视图继承的 tintColor；宿主设置 UIView.tintColor 并验证对比度。样例通过 UIKit traitCollection 与 UIAccessibility 读取外观、字号及动态偏好，并响应变化；本阶段没有自定义动画或外部资源，不创建空资源包。
 
 本包是 iOS UI 产品，不能用 macOS 上通用 `swift build` 代替 iOS 构建验收。样例默认禁用签名，面向 Simulator；真机运行时由维护者本地配置自己的签名，不提交账号、团队配置或签名材料。不要直接公开原始构建日志或 xcresult，它们可能含本机路径和设备标识。
 
