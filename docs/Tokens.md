@@ -16,8 +16,10 @@
 
 系统组件保持自己的文字角色和布局，以上组合 tokens 不覆盖其内部样式。字段、标签、说明、错误按 leading 对齐；字段说明/错误置于该字段下方，同起点，错误优先于非必要帮助。空状态采用系统容器的居中布局，长说明可多行；操作在内容后，不用绝对定位。大字体、长中英文与窄窗口时纵向重排，不截断关键标题/错误或用缩字换密度。系统圆角、边框、阴影、材质暂不抽象成独立公开 token。
 
-## #35 公开实现映射
+## #35 候选公开 API 映射（未合入 main）
 
 颜色对应 `RhineColor.textPrimary/textSecondary/canvas/group/separator/error`，公开 UIColor；`RhineColor.accent(in:)` 在使用时从视图读取继承的 tintColor，不保存全局强调色。字体通过 `RhineTypography.font(_:compatibleWith:)` 返回 UIFont，角色为 title/body/label/supporting，可显式传入当前 UITraitCollection；宿主文字控件开启 adjustsFontForContentSizeCategory。间距对应 `RhineSpacing.inline/related/group/page`，自定义命中下限为 `RhineTarget.minimum`。
 
 动效规则当前表现为不添加自定义动画，不为了占位导出始终返回同值的动效API。UIKit样例读取 UIAccessibility.isReduceMotionEnabled / isReduceTransparencyEnabled 并响应状态变化通知；真实组件有动效需求时再按具体 issue 明确 API 和验收。
+
+基础包实现与具体公开API映射见 [UIKit Draft PR #1](https://github.com/linhay/rhine-design-ios/pull/1) 的候选分支，尚未合入main；本页不是已发布API清单。

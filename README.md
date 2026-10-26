@@ -6,6 +6,8 @@
 
 ## 状态
 
+当前 `main` 仅包含已确认规范。基础包和可运行工程位于 [UIKit Draft PR #1](https://github.com/linhay/rhine-design-ios/pull/1)，尚未合入主线；以下 API 与构建步骤仅适用于该候选分支。
+
 设计基线已确认，原生基础链路已有候选实现；尚未发布。目标 iOS / iPadOS 17.0，固定 Xcode 27.1、Swift 6.4 编译器和 Swift 6 语言模式。目标兼容范围不等于运行验证通过，详见验收记录。
 
 ## 规范

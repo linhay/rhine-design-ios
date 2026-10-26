@@ -9,7 +9,7 @@ iOS 的规范、tokens、原生实现、样例、版本和验收独立于 Web/Re
 | ID | 已确认方案 | 原因与影响 |
 | --- | --- | --- |
 | D01 归属 | 使用独立公开仓库 `linhay/rhine-design-ios`，规范与源码同仓 | 平台和版本边界清楚；代价是独立 CI、维护与发布。原生代码放回 Web 仓库虽少一个仓库，但独立演进不够直观，不作为首选。 |
-| D02 包与框架 | UIKit；一个 Swift Package、一个 library product/module `RhineDesign`；`Sources/RhineDesign/`、`Tests/RhineDesignTests/`，`Examples/` 为单独 Xcode 样例 App，通过公开产品导入 | 公开组件与样例以 UIKit 原生实现为主；公开 UIColor / UIFont 等 UIKit 类型，Auto Layout 布局。不依赖 SwiftUI 或以其包装作为核心。UI Kit 设计资源仍不等于 UIKit 运行库。 |
+| D02 包与框架 | UIKit；一个 Swift Package、一个 library product/module `RhineDesign`；`Sources/RhineDesign/`、`Tests/RhineDesignTests/`，`Examples/` 为单独 Xcode 样例 App，通过公开产品导入 | 不引入第三方运行时，不复制源文件消费；公开组件与样例以 UIKit 原生实现为主；公开 UIColor / UIFont 等 UIKit 类型，Auto Layout 布局。不依赖 SwiftUI 或以其包装作为核心。UI Kit 设计资源仍不等于 UIKit 运行库。 |
 | D03 平台 | 最低 iOS / iPadOS **17.0**；首批覆盖 iPhone / iPad，随容器适配；不承诺 macOS、Catalyst、watchOS、tvOS、visionOS | 使用 iOS 17 系统空状态能力，减少自绘与兼容分支；不支持 16 及更早系统是明确代价。新设备专属 API 不进入首批，尺寸适配不等于已验证所有机型。 |
 | D04 构建 | 固定 **Xcode 27.1 / iOS 27.1 SDK / Swift 6.4 编译器 / Swift 6 语言模式**；manifest `swift-tools-version: 6.0`，不使用高于此 manifest 门槛的特性 | 固定可复现工具链，采用 Swift 6 并发检查；tools-version 是 manifest 门槛，不代表已验证旧 Xcode。当前只承诺固定工具链；若希望支持旧 Xcode，另补具体编译矩阵。运行系统下限与编译器/SDK分别记录。 |
 | D05 外观 | 单一系统原生主题；跟随浅色/深色、提高对比度、Dynamic Type、减少动态；默认系统 tint，允许宿主注入可访问的语义 accent | 不复制 Web 多主题、字体、材质或圆角；不锁定某一代系统的截图外观，不自绘模仿新系统材质。宿主覆盖 accent 也需通过对比度验收。 |
