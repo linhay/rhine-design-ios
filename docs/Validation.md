@@ -30,3 +30,21 @@ UIKit规范按用户纠正更新；UIKit候选原生构建、运行和组件验�
 ## 历史记录：已被替代的 SwiftUI 候选
 
 此前6811f67及文档8bae4e6使用SwiftUI；其3种模拟器环境各3项测试和干净归档复验只属于该旧候选，**不计入UIKit当前验收**。完整历史记录可在[旧修订](https://github.com/linhay/rhine-design-ios/blob/8bae4e6/docs/Validation.md)查看。UIKit候选结果在下文另行记录。
+
+## UIKit 当前候选结果 · 2026-10-26
+
+绑定实现修订 [fded02a](https://github.com/linhay/rhine-design-ios/commit/fded02a)；后续仅补文档和主线说明。Swift Package、样例和测试源码没有 SwiftUI 导入或 UIHostingController：公开 UIColor/UIFont、UIView.tintColor继承、UIViewController + UIScrollView/UIStackView + Auto Layout，UIKit trait/UIAccessibility变化读取。固定 Xcode27.1 / Swift6.4编译器 / Swift6模式。
+
+| 实际检查 | 结果 | 范围与限制 |
+| --- | --- | --- |
+| iPhone SE（第3代）/ iOS27.0 | UIKit build/install/launch成功，5项原生测试通过 | 375pt竖屏、浅色标准字号截图本地实看；不代表完整字号/外观矩阵通过。 |
+| iPad（A16）/ iPadOS27.0 首次 | 4项单元测试通过，1项UI测试失败 | 初始标题在10秒内未找到，后续也无ScrollView；保留失败，不将其改写为通过。 |
+| iPad（A16）/ iPadOS27.0 复查 | 显式boot/install/launch后UIKit界面可见；重测5项通过 | UI测试将启动等待调整为30秒，并在未显示首屏时立即失败，避免级联滚动错误。尚未确定首次失败根因；不声称修复了已定位的产品缺陷。 |
+| 干净源码归档 / iPhone SE / iOS27.0 | 将fded02a用git archive导出、新建DerivedData，5项测试通过 | 相对Package消费链路可独立构建；无复制工作区实现或挪用旧SwiftUI结果。 |
+| 干净归档 / iPhone Duo / iOS27.1 | **未完成**：工具调用300秒超时 | 遗留的本任务测试进程已终止；无最终成功结果，不计为通过。 |
+| iOS/iPadOS17.0、iPadOS27.1 | **未验证，仍阻塞#35完成** | 缺少可用目标运行环境的既有问题仍在，不能由27.0结果代替。 |
+| 剩余窗口/字号/外观/动态偏好、真机VoiceOver | 未完成 | 逐项按已确认矩阵补证，#36继续等待必要前置。 |
+
+5项测试为：`testPublicColorsRetainNativeTraitAdaptation`（6颜色×4trait组合）、`testCanvasActuallyChangesBetweenLightAndDark`、`testAccentResolvesInheritedTintAtTimeOfUse`（宿主tint改变后重新解析）、`testTextRolesScaleUsingTheConsumersTraits`（4角色从Large到最大辅助字号）及 `testUIKitGalleryShowsContentAndScrollsToEnd`（标题、末项可命中、标签存在）。UI测试不证明全局无裁切/重叠或真实VoiceOver可用。
+
+只公开脱敏文字摘要；原始工具日志、截图、xcresult及设备标识不上传。没有发布、没有合并基础候选，也没有开始#36组件实现。
