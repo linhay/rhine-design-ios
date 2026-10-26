@@ -1,12 +1,14 @@
 # 首批组件契约
 
+> 当前主框架为 **UIKit**，依据[用户明确纠正](https://github.com/linhay/rhine-design/issues/34#issuecomment-6419860390)（2026-10-26）。此前 SwiftUI 主方案及其控件映射已被取代；SwiftUI 只可作为未来另行评估的可选消费适配，不是首批依赖。
+
 确认依据：[方案 v1](https://github.com/linhay/rhine-design/issues/34#issuecomment-6410947901) 与 [维护者确认](https://github.com/linhay/rhine-design/issues/34#issuecomment-6410983498)，2026-10-26。设计规则已确认；实现和运行验收状态另见 [Validation](Validation.md)。
 
 本文件定义 #36 的交付范围；规范存在不表示组件已实现。
 
 ## 按钮
 
-- 公开语义：`primary`、`secondary`、`plain`；分别优先使用系统 borderedProminent、bordered、borderless 表达。破坏性是独立 `destructive` role，不等于第四套皮肤；呈现仍遵循系统 role，宿主按场景选择视觉层级。
+- 公开语义：`primary`、`secondary`、`plain`；分别优先使用 UIButton.Configuration.filled()、tinted()、plain() 表达，使用 UIButton 原生状态与 role。破坏性是独立 `destructive` role，不等于第四套皮肤；呈现仍遵循系统 role，宿主按场景选择视觉层级。
 - 首批为文字按钮或图标加文字按钮；图标仅作补充，纯图标按钮不在本期。名称由宿主提供并支持本地化，装饰图标不重复朗读。
 - 输入：标题/可选图标、样式、role、`isEnabled`、`isLoading`、本地化忙碌文案及同步 action。只有 enabled 且非 loading 可触发；点击与辅助技术激活走同一门禁。
 - loading 保留动作名称、显示系统进度与“正在…”等静态状态，锁住重复激活；disabled 表示当前不可执行，不显示虚假进度。进行中优先呈现 loading，二者均禁止 action。
@@ -16,17 +18,21 @@
 
 ## 基础表单契约
 
-- **四种字段**：单行 `TextField`（普通文本、email、URL 输入用途）、`SecureField`、布尔 `Toggle`、有限静态选项的单选 `Picker`。字段值均由宿主绑定；选择项具有稳定标识和本地化显示名。不含多行输入、数字/金额解析、日期、搜索远端选项、多选、附件或动态 schema。
-- 基于系统 Form/Section 组合；首批不新增通用表单引擎。控件标签持久可见，placeholder 不代替 label；每字段允许说明、错误及 disabled。密码默认安全输入，不自带显示密码开关、密码规则或凭据存储。
-- email/URL 只是键盘/输入用途，不声明校验成功或地址真实。规则由宿主提供，初次加载不显示错误；提交时校验全部字段，失败保留输入、展示对应错误并定位首个无效字段。首次提交后，对已交互字段在失焦时由宿主重验，下一次提交再次验证全部字段；Toggle/Picker 这类离散选择可在选择完成时重验。输入法组合期间不改写文本或强行移动焦点。
-- 单行输入键盘按顺序 Next，末字段 Done 收起键盘；真正提交使用显式按钮，Toggle/Picker 也先更新草稿。焦点与键盘由宿主编排，错误字段、退出和提交在键盘出现时仍可滚动到达。
+- **四种字段**：单行 `UITextField`（普通文本、email、URL 输入用途）、安全 `UITextField`（isSecureTextEntry）、布尔 `UISwitch`、静态单选（UIButton + UIMenu/UIAction、选择状态）。字段值由宿主读写，控件通过 UIControl 事件/回调向宿主报告意图；选择项具有稳定标识和本地化显示名。不含多行输入、数字/金额解析、日期、搜索远端选项、多选、附件或动态 schema。
+- 基于 UIKit 原生分组容器和 Auto Layout 组合，保留系统控件样式与最小命中范围；首批不新增通用表单引擎。控件标签持久可见，placeholder 不代替 label；每字段允许说明、错误及 disabled。密码默认安全输入，不自带显示密码开关、密码规则或凭据存储。
+- email/URL 只是键盘/输入用途，不声明校验成功或地址真实。规则由宿主提供，初次加载不显示错误；提交时校验全部字段，失败保留输入、展示对应错误并定位首个无效字段。首次提交后，对已交互字段在失焦时由宿主重验，下一次提交再次验证全部字段；UISwitch/单选 这类离散选择可在选择完成时重验。输入法组合期间不改写文本或强行移动焦点。
+- 单行输入键盘按顺序 Next，末字段 Done 收起键盘；真正提交使用显式按钮，UISwitch/单选 也先更新草稿。焦点与键盘由宿主编排，错误字段、退出和提交在键盘出现时仍可滚动到达。
 - 显式提交调用宿主保存；宿主同步锁定本次草稿、禁用可编辑字段与重复提交。保存成功后更新已保存值并关闭；失败恢复可编辑并保留全部草稿。通用组件不擅自写入持久化存储。
 - 样例明确三种退出：未改动可直接退出；有改动时“继续编辑 / 放弃修改”明确选择；完成仅在校验和保存成功后关闭。保存过程中样例阻止退出，避免把退出解释为取消任务。这个草稿策略属于示例/宿主，不内置到字段组件。
 - 显式取消与交互式关闭都遵循同一草稿规则；不承诺首批拦截任意系统关闭手势。样例可在有草稿时禁用手势关闭，保留可访问的显式取消入口。关闭后将键盘/辅助焦点恢复到合理入口；失败不关闭、不丢输入。
 
 ## 空状态契约
 
-- 基于 `ContentUnavailableView`：标题必填，说明与系统符号可选；最多一个可选主动作，必须同时有可访问文案和可执行回调。无可执行动作时不显示占位按钮。
+- 基于 UIKit `UIContentUnavailableConfiguration`（按场景使用 .empty() / .search() 及系统内容视图）：标题必填，说明与系统符号可选；最多一个可选主动作，必须同时有可访问文案和可执行回调。无可执行动作时不显示占位按钮。
 - 组件呈现内容，宿主决定何时显示、文案、图标、动作和路由。首批支持“尚无内容”和“无匹配结果”的内容契约，后者的清除筛选动作由宿主执行。
 - 加载用独立进度呈现，失败用错误与重试，权限不足用准确说明与可行路径；这些由样例/宿主组合，不扩成万能状态组件，也不能伪装为“暂无内容”。不自动请求权限、打开设置或清空筛选。
 - 空状态动作复用按钮契约；系统标题/说明排版优先，长文和辅助字号可滚动，不覆盖正在加载、已有内容或实际错误。
+
+## UIKit 实现边界
+
+公开组件以 UIView / UIControl（及必要的 UIViewController 组合）为入口；不要求 UIHostingController、不依赖 SwiftUI。控件状态变化在主线程执行。文字采用 UIFont 文本样式和 Dynamic Type，布局使用 Auto Layout、方向性边距及安全区域，避免固定行高。宿主负责 UITextFieldDelegate / UIControl 事件的校验、resignFirstResponder / becomeFirstResponder 焦点编排及键盘布局；可访问标签/值/错误用 UIKit accessibility API，UI测试与真实 VoiceOver 各自留证。

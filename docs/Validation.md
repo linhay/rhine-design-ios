@@ -1,17 +1,19 @@
 # 验收计划与结果
 
+> 当前主框架为 **UIKit**，依据[用户明确纠正](https://github.com/linhay/rhine-design/issues/34#issuecomment-6419860390)（2026-10-26）。此前 SwiftUI 主方案及其控件映射已被取代；SwiftUI 只可作为未来另行评估的可选消费适配，不是首批依赖。
+
 确认依据：[方案 v1](https://github.com/linhay/rhine-design/issues/34#issuecomment-6410947901) 与 [维护者确认](https://github.com/linhay/rhine-design/issues/34#issuecomment-6410983498)，2026-10-26。设计规则已确认；实现和运行验收状态另见 [Validation](Validation.md)。
 
 ## 当前状态
 
-规范审阅完成；原生构建、运行和组件验收尚未执行。目标最低系统 17.0 不等于已经验证支持。
+UIKit规范按用户纠正更新；UIKit候选原生构建、运行和组件验收须重新记录。旧SwiftUI候选结果不可当作UIKit通过。目标最低系统 17.0 不等于已经验证支持。
 
 ## 已确认矩阵
 
 | 编号 | 覆盖与预期 |
 | --- | --- |
 | P01 平台 | 在 iOS 17.0、iPadOS 17.0 与 iOS/iPadOS 27.1 上分别构建并运行同一公开 Package 样例；固定 Xcode 27.1。每一端均记录实际 runtime 版本，不用27.1通过替代17.0证据。旧 runtime 获取困难记为阻塞，不能静默抬高下限或冒称验证完成。 |
-| A01 布局 | 每个平台在默认 `.large` 字号运行核心场景；最新系统补 `.xxxLarge`、`.accessibility3`、`.accessibility5`。iPhone 375pt窄屏与常规宽屏、横竖屏；iPad全屏横竖屏和实际可用最窄多任务窗口，另以320pt内容容器测窄布局。记录实际point尺寸，不把容器测试当设备验证。长中英文、长错误、键盘出现均可阅读/操作。 |
+| A01 布局 | 每个平台在默认 UIContentSizeCategory.large 字号运行核心场景；最新系统补 UIContentSizeCategory.extraExtraExtraLarge、UIContentSizeCategory.accessibilityExtraLarge、UIContentSizeCategory.accessibilityExtraExtraExtraLarge。iPhone 375pt窄屏与常规宽屏、横竖屏；iPad全屏横竖屏和实际可用最窄多任务窗口，另以320pt内容容器测窄布局。记录实际point尺寸，不把容器测试当设备验证。长中英文、长错误、键盘出现均可阅读/操作。 |
 | 外观 | 最低与较新系统均浅/深色、标准对比度；较新系统补浅/深色 × 提高对比度，并开关减少透明度核对内容可读，大字体 + 窄容器 + 深色组合。动态文本颜色不丢失，错误不只靠颜色，关键动作可识别；若使用自定义 accent，完整补同矩阵。 |
 | B01/B02 | 合成任务手动触发完成与失败；忙碌期间快速重复点击/辅助激活不重复调用，禁用零调用；破坏性role与名称可理解，无通用强制确认。回调计数证据与实际触屏证据分别记录。 |
 | F01/F02 | 空必填、错误格式、修正重提、长错误、失败后草稿保留；Next/Done、离散选择草稿、键盘遮挡、脏草稿继续/放弃、成功关闭与归焦。合成规则不变成库内业务规则；提交期间不重复保存、不退出丢草稿。 |

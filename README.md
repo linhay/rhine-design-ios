@@ -1,6 +1,8 @@
 # Rhine Design for iOS
 
-独立的 SwiftUI 设计体系与原生组件库。规范、tokens、样例、版本和验收均独立于 [Rhine Design Web](https://github.com/linhay/rhine-design)。
+> 当前主框架为 **UIKit**，依据[用户明确纠正](https://github.com/linhay/rhine-design/issues/34#issuecomment-6419860390)（2026-10-26）。此前 SwiftUI 主方案及其控件映射已被取代；SwiftUI 只可作为未来另行评估的可选消费适配，不是首批依赖。
+
+独立的 UIKit 设计体系与原生组件库。规范、tokens、样例、版本和验收均独立于 [Rhine Design Web](https://github.com/linhay/rhine-design)。
 
 ## 状态
 
