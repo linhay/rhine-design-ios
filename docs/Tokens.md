@@ -13,3 +13,9 @@
 | `motion.stateChange` | 首批自定义状态切换不附加装饰性位移、弹簧或循环动画 | 系统控件使用系统行为；读取 Reduce Motion。忙碌始终有静态文字可理解，系统进度动画不是唯一信号。暂不引入任意 duration/easing token。 |
 
 系统组件保持自己的文字角色和布局，以上组合 tokens 不覆盖其内部样式。字段、标签、说明、错误按 leading 对齐；字段说明/错误置于该字段下方，同起点，错误优先于非必要帮助。空状态采用系统容器的居中布局，长说明可多行；操作在内容后，不用绝对定位。大字体、长中英文与窄窗口时纵向重排，不截断关键标题/错误或用缩字换密度。系统圆角、边框、阴影、材质暂不抽象成独立公开 token。
+
+## #35 公开实现映射
+
+颜色对应 `RhineColor.textPrimary/textSecondary/canvas/group/separator/error/accent`；字体对应 `RhineTypography.title/body/label/supporting`；间距对应 `RhineSpacing.inline/related/group/page`；自定义命中下限为 `RhineTarget.minimum`。`accent` 为 `TintShapeStyle`，继承宿主 tint；系统动态颜色在模块内部桥接，公开类型不暴露 UIKit。
+
+动效规则当前表现为不添加自定义动画，不为了占位导出始终返回同值的动效API。样例直接读取 SwiftUI 的 Reduce Motion 与 Reduce Transparency 环境；真实组件有动效需求时再按具体 issue 明确 API 和验收。

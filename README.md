@@ -4,7 +4,7 @@
 
 ## 状态
 
-设计基线已确认，原生基础链路正在建设；尚未发布。目标 iOS / iPadOS 17.0，固定 Xcode 27.1、Swift 6.4 编译器和 Swift 6 语言模式。目标兼容范围不等于运行验证通过，详见验收记录。
+设计基线已确认，原生基础链路已有候选实现；尚未发布。目标 iOS / iPadOS 17.0，固定 Xcode 27.1、Swift 6.4 编译器和 Swift 6 语言模式。目标兼容范围不等于运行验证通过，详见验收记录。
 
 ## 规范
 
@@ -20,8 +20,42 @@
 
 首批计划为按钮、单行文本、安全输入、开关、静态单选和空状态。请求、校验规则、草稿与业务状态由宿主管理，不迁移消费应用。
 
+## 本地构建与消费
+
+使用 Xcode 27.1 打开 `Examples/RhineExample.xcodeproj`，选择 `RhineExample` scheme 和已安装的 iOS Simulator。工程已提交，不要求安装工程生成工具。只有修改 `Examples/project.yml` 后才需使用 XcodeGen 2.46.0 重新生成：
+
+```sh
+xcodegen generate --spec Examples/project.yml
+```
+
+样例通过本地 Package reference 和公开 `RhineDesign` 产品消费，源码只包含 `import RhineDesign`，没有复制组件源文件。命令行检查示例（需要对应型号和运行时已安装）：
+
+```sh
+xcodebuild -project Examples/RhineExample.xcodeproj -scheme RhineExample \
+  -destination 'platform=iOS Simulator,name=iPhone Duo,OS=27.1' \
+  -derivedDataPath .local/DerivedData test
+```
+
+公开入口：`RhineColor`、`RhineTypography`、`RhineSpacing`、`RhineTarget`。例如：
+
+```swift
+import SwiftUI
+import RhineDesign
+
+Text("Synthetic example")
+    .font(RhineTypography.body)
+    .foregroundStyle(RhineColor.textPrimary)
+    .padding(RhineSpacing.page)
+```
+
+`RhineColor.accent` 使用宿主系统 tint；需要品牌覆盖时由宿主设置 `.tint(...)` 并验证对比度。系统 Reduce Motion / Reduce Transparency 等环境值在样例中实时读取；本阶段没有自定义动画或外部资源，不创建空资源包。
+
+本包是 iOS UI 产品，不能用 macOS 上通用 `swift build` 代替 iOS 构建验收。样例默认禁用签名，面向 Simulator；真机运行时由维护者本地配置自己的签名，不提交账号、团队配置或签名材料。不要直接公开原始构建日志或 xcresult，它们可能含本机路径和设备标识。
+
 ## 贡献与隐私
 
 仅使用合成数据和可公开引用的资料。提交前检查正文、命令、日志、截图、录屏、附件及其元数据；禁止凭据、内部地址、私人仓库信息、绝对本机路径、设备名称/序列号/UDID 和真实用户内容。保留公开修订、工具链、系统、通用设备型号及相对路径以便复现。
+
+公开Git提交使用GitHub noreply邮箱，避免将私人联系方式写入提交元数据。
 
 代码、规范和运行证据分别记录；未验证不能记为通过。任何发布均需单独记录制品与消费验收，不能随 Web/npm 自动发布。

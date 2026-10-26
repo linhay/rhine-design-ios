@@ -1,0 +1,531 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		00617FA8569668B5DD676128 /* RhineDesign in Frameworks */ = {isa = PBXBuildFile; productRef = E22B7E78561C375E07ECD461 /* RhineDesign */; };
+		3C916D51878979CA24CF87CD /* NativeColorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FEE85AC039711A43836A642 /* NativeColorTests.swift */; };
+		C3284D4C8D7CF5D159258EA6 /* FoundationConsumptionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73C0018EBC9A32D19EF60ADC /* FoundationConsumptionTests.swift */; };
+		CA933A3C96DB82A1506CAAD9 /* RhineDesign in Frameworks */ = {isa = PBXBuildFile; productRef = 48FFCD56CCF7373923FF7103 /* RhineDesign */; };
+		ED114AB753DE53126C29D0ED /* RhineExampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAB7C025F28FC937F381CC88 /* RhineExampleApp.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		364815D53D4E7EDAFBD0A398 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BDA10B6E6956B2AD3E87287D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8F387D8056DA81173CD46E8B;
+			remoteInfo = RhineExample;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		3C3FC3805EDB274878F1B1E3 /* RhineExample.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = RhineExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		73C0018EBC9A32D19EF60ADC /* FoundationConsumptionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoundationConsumptionTests.swift; sourceTree = "<group>"; };
+		8B23822B0D77FC020AEF702D /* RhineDesignTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = RhineDesignTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		8FEE85AC039711A43836A642 /* NativeColorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeColorTests.swift; sourceTree = "<group>"; };
+		CEF31E97B6AF1D6E213DC84B /* rhine-design-ios */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "rhine-design-ios"; path = ..; sourceTree = SOURCE_ROOT; };
+		DAB7C025F28FC937F381CC88 /* RhineExampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RhineExampleApp.swift; sourceTree = "<group>"; };
+		F835FB40464254B5A7010406 /* RhineExampleUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = RhineExampleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		184CE66F3889417D5215028B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CA933A3C96DB82A1506CAAD9 /* RhineDesign in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		960FF5BCFF3CF9C7FC64D20E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				00617FA8569668B5DD676128 /* RhineDesign in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		2DCC5E1E23FEBB158E986B07 = {
+			isa = PBXGroup;
+			children = (
+				4C77848C5A86B71FDF53A557 /* Packages */,
+				FEBE56D74961724F49C5C935 /* RhineDesignTests */,
+				EC9DE3DE85E76EA32ECE86D2 /* RhineExample */,
+				79E8EADC4A5170DC5BD945FA /* RhineExampleUITests */,
+				5F0F3AEC2C40FCFBF2F9B7A7 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		4C77848C5A86B71FDF53A557 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				CEF31E97B6AF1D6E213DC84B /* rhine-design-ios */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
+		5F0F3AEC2C40FCFBF2F9B7A7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8B23822B0D77FC020AEF702D /* RhineDesignTests.xctest */,
+				3C3FC3805EDB274878F1B1E3 /* RhineExample.app */,
+				F835FB40464254B5A7010406 /* RhineExampleUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		79E8EADC4A5170DC5BD945FA /* RhineExampleUITests */ = {
+			isa = PBXGroup;
+			children = (
+				73C0018EBC9A32D19EF60ADC /* FoundationConsumptionTests.swift */,
+			);
+			path = RhineExampleUITests;
+			sourceTree = "<group>";
+		};
+		EC9DE3DE85E76EA32ECE86D2 /* RhineExample */ = {
+			isa = PBXGroup;
+			children = (
+				DAB7C025F28FC937F381CC88 /* RhineExampleApp.swift */,
+			);
+			path = RhineExample;
+			sourceTree = "<group>";
+		};
+		FEBE56D74961724F49C5C935 /* RhineDesignTests */ = {
+			isa = PBXGroup;
+			children = (
+				8FEE85AC039711A43836A642 /* NativeColorTests.swift */,
+			);
+			name = RhineDesignTests;
+			path = ../Tests/RhineDesignTests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		20F2EDD904F9EDFED4BC8983 /* RhineDesignTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A02650C0ACC35030C1BE42A3 /* Build configuration list for PBXNativeTarget "RhineDesignTests" */;
+			buildPhases = (
+				7BBDCACC419447CD36DF1E15 /* Sources */,
+				184CE66F3889417D5215028B /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RhineDesignTests;
+			packageProductDependencies = (
+				48FFCD56CCF7373923FF7103 /* RhineDesign */,
+			);
+			productName = RhineDesignTests;
+			productReference = 8B23822B0D77FC020AEF702D /* RhineDesignTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		8F387D8056DA81173CD46E8B /* RhineExample */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D66A3364C43F298D1940E375 /* Build configuration list for PBXNativeTarget "RhineExample" */;
+			buildPhases = (
+				DEEDFB7B4EDF3A527E271E4B /* Sources */,
+				960FF5BCFF3CF9C7FC64D20E /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RhineExample;
+			packageProductDependencies = (
+				E22B7E78561C375E07ECD461 /* RhineDesign */,
+			);
+			productName = RhineExample;
+			productReference = 3C3FC3805EDB274878F1B1E3 /* RhineExample.app */;
+			productType = "com.apple.product-type.application";
+		};
+		AF6B80E5CD61F628D02FADFC /* RhineExampleUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F89F8D2C2FBAB326B2ADA345 /* Build configuration list for PBXNativeTarget "RhineExampleUITests" */;
+			buildPhases = (
+				1C18306FD36AC1ADB04ECA55 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				CFE3D59DF00FF2CB724BD795 /* PBXTargetDependency */,
+			);
+			name = RhineExampleUITests;
+			packageProductDependencies = (
+			);
+			productName = RhineExampleUITests;
+			productReference = F835FB40464254B5A7010406 /* RhineExampleUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		BDA10B6E6956B2AD3E87287D /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					AF6B80E5CD61F628D02FADFC = {
+						TestTargetID = 8F387D8056DA81173CD46E8B;
+					};
+				};
+			};
+			buildConfigurationList = A78614FAB4ADE910034D295A /* Build configuration list for PBXProject "RhineExample" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 2DCC5E1E23FEBB158E986B07;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				364CD215F023697F4673472A /* XCLocalSwiftPackageReference ".." */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 5F0F3AEC2C40FCFBF2F9B7A7 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8F387D8056DA81173CD46E8B /* RhineExample */,
+				20F2EDD904F9EDFED4BC8983 /* RhineDesignTests */,
+				AF6B80E5CD61F628D02FADFC /* RhineExampleUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1C18306FD36AC1ADB04ECA55 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C3284D4C8D7CF5D159258EA6 /* FoundationConsumptionTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7BBDCACC419447CD36DF1E15 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3C916D51878979CA24CF87CD /* NativeColorTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DEEDFB7B4EDF3A527E271E4B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				ED114AB753DE53126C29D0ED /* RhineExampleApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		CFE3D59DF00FF2CB724BD795 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8F387D8056DA81173CD46E8B /* RhineExample */;
+			targetProxy = 364815D53D4E7EDAFBD0A398 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		0D2C273BF32FBA11E739C4C9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		1C9D59620E3EBF639F7A9488 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.linhay.rhinedesign.uitests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = RhineExample;
+			};
+			name = Release;
+		};
+		48BB43039AA9336EF0A43CD1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.linhay.rhinedesign.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		5B8221ABEA5BCDBA26A741A9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_KEY_CFBundleDisplayName = "Rhine Foundation";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.linhay.rhinedesign.example;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		772E9461FB6D3F7FCF4433AB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_KEY_CFBundleDisplayName = "Rhine Foundation";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.linhay.rhinedesign.example;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		A14A280DD1D11E3C93C98790 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		DD6D7A498EBC38552E94581F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.linhay.rhinedesign.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		FD8086D549713D4E09B3D2E9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.linhay.rhinedesign.uitests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = RhineExample;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A02650C0ACC35030C1BE42A3 /* Build configuration list for PBXNativeTarget "RhineDesignTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DD6D7A498EBC38552E94581F /* Debug */,
+				48BB43039AA9336EF0A43CD1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		A78614FAB4ADE910034D295A /* Build configuration list for PBXProject "RhineExample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A14A280DD1D11E3C93C98790 /* Debug */,
+				0D2C273BF32FBA11E739C4C9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		D66A3364C43F298D1940E375 /* Build configuration list for PBXNativeTarget "RhineExample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5B8221ABEA5BCDBA26A741A9 /* Debug */,
+				772E9461FB6D3F7FCF4433AB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		F89F8D2C2FBAB326B2ADA345 /* Build configuration list for PBXNativeTarget "RhineExampleUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FD8086D549713D4E09B3D2E9 /* Debug */,
+				1C9D59620E3EBF639F7A9488 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		364CD215F023697F4673472A /* XCLocalSwiftPackageReference ".." */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ..;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		48FFCD56CCF7373923FF7103 /* RhineDesign */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RhineDesign;
+		};
+		E22B7E78561C375E07ECD461 /* RhineDesign */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RhineDesign;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = BDA10B6E6956B2AD3E87287D /* Project object */;
+}
