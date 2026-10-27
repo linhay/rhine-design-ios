@@ -37,8 +37,13 @@ xcodegen generate --spec Examples/project.yml
 ```sh
 xcodebuild -project Examples/RhineExample.xcodeproj -scheme RhineExample \
   -destination 'platform=iOS Simulator,name=iPhone Duo,OS=27.1' \
-  -derivedDataPath .local/DerivedData test
+  -derivedDataPath .local/DerivedData -parallel-testing-enabled NO \
+  -resultBundlePath .local/Validation.xcresult test
 ```
+
+结果路径每次使用新的名称，保留完整 xcresult；一次只指定一个 destination。验收测试回读实际外观、字号与窗口尺寸，并同时保留 app 与 display 截图；断言通过不代替视觉审阅。
+
+在样例 scheme 的启动参数加入 `--preview-narrow-content` 可将真实内容容器上限设为 320pt；默认仍为 720pt。该预览只约束内容布局，不覆盖系统字号或外观，也不代替 iPad 多任务窗口验收。
 
 公开入口：`RhineColor`、`RhineTypography`、`RhineSpacing`、`RhineTarget`。例如：
 

@@ -24,6 +24,9 @@ final class FoundationViewController: UIViewController {
         let width = content.widthAnchor.constraint(equalTo: scroll.frameLayoutGuide.widthAnchor,
                                                    constant: -2 * RhineSpacing.page)
         width.priority = .defaultHigh
+        // A real constrained content container for narrow-layout validation.
+        // This changes layout only; system appearance and accessibility traits remain inherited.
+        let maximumContentWidth: CGFloat = ProcessInfo.processInfo.arguments.contains("--preview-narrow-content") ? 320 : 720
         NSLayoutConstraint.activate([
             scroll.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             scroll.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
@@ -35,7 +38,7 @@ final class FoundationViewController: UIViewController {
             content.trailingAnchor.constraint(lessThanOrEqualTo: scroll.contentLayoutGuide.trailingAnchor, constant: -RhineSpacing.page),
             content.centerXAnchor.constraint(equalTo: scroll.frameLayoutGuide.centerXAnchor),
             scroll.contentLayoutGuide.widthAnchor.constraint(equalTo: scroll.frameLayoutGuide.widthAnchor),
-            content.widthAnchor.constraint(lessThanOrEqualToConstant: 720),
+            content.widthAnchor.constraint(lessThanOrEqualToConstant: maximumContentWidth),
             width
         ])
 

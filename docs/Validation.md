@@ -6,14 +6,20 @@
 
 ## 当前状态
 
-UIKit规范按用户纠正更新；UIKit候选原生构建、运行和组件验收须重新记录。旧SwiftUI候选结果不可当作UIKit通过。目标最低系统 17.0 不等于已经验证支持。
+UIKit 基础候选已有原生构建、公开包消费和局部 UI 证据，最新增量见下文 2026-10-27 记录；最低系统、完整环境矩阵与真机验收仍未完成。旧 SwiftUI 候选结果不可当作 UIKit 通过。目标最低系统 17.0 不等于已经验证支持。
+
+## 运行矩阵事实更正 · 2026-10-27
+
+本节取代历史记录中将 `iOS/iPadOS 27.1` 视为统一设备矩阵的条目。[Apple Xcode 27.1 发布说明](https://developer.apple.com/documentation/xcode-release-notes/xcode-27_1-release-notes) 列出 iOS 27.1、iPadOS 27 SDK；[Apple 的 Duo 说明](https://developer.apple.com/news/?id=rfb1rooi) 明确 27.1 为 Duo 形态提供专属支持。[系统发布记录](https://support.apple.com/en-by/100100) 也将 iOS 27.1 限定为 iPhone Duo，并另列 iPadOS 27.0.1 与后续 27.2，不能声称存在通用 iPadOS 27.1。
+
+固定 Xcode 27.1 / Swift 6.4 / Swift 6 不变；当前固定工具链的较新系统模拟器矩阵为 Duo / iOS 27.1、普通 iPhone 与 iPad / 27.0，逐项记实际版本。27.0 模拟器不冒称 27.0.1 或 27.2 真机，也不称为当前最新系统。最低 iOS/iPadOS 17.0、iPhone/iPad 类别、窗口/方向/字号/外观/动态偏好与真机人工验收维度不变。未来工具链与系统升级另记录；本次更正不抬高下限、不消除未执行的检查。
 
 ## 已确认矩阵
 
 | 编号 | 覆盖与预期 |
 | --- | --- |
-| P01 平台 | 在 iOS 17.0、iPadOS 17.0 与 iOS/iPadOS 27.1 上分别构建并运行同一公开 Package 样例；固定 Xcode 27.1。每一端均记录实际 runtime 版本，不用27.1通过替代17.0证据。旧 runtime 获取困难记为阻塞，不能静默抬高下限或冒称验证完成。 |
-| A01 布局 | 每个平台在默认 UIContentSizeCategory.large 字号运行核心场景；最新系统补 UIContentSizeCategory.extraExtraExtraLarge、UIContentSizeCategory.accessibilityExtraLarge、UIContentSizeCategory.accessibilityExtraExtraExtraLarge。iPhone 375pt窄屏与常规宽屏、横竖屏；iPad全屏横竖屏和实际可用最窄多任务窗口，另以320pt内容容器测窄布局。记录实际point尺寸，不把容器测试当设备验证。长中英文、长错误、键盘出现均可阅读/操作。 |
+| P01 平台 | 在 iOS 17.0、iPadOS 17.0，以及固定工具链下 Duo / iOS 27.1、普通 iPhone 与 iPad / 27.0 上分别构建并运行同一公开 Package 样例；固定 Xcode 27.1。每一端均记录实际 runtime 版本，不用较新系统通过替代17.0证据。旧 runtime 获取困难记为阻塞，不能静默抬高下限或冒称验证完成。 |
+| A01 布局 | 每个平台在默认 UIContentSizeCategory.large 字号运行核心场景；固定工具链较新系统补 UIContentSizeCategory.extraExtraExtraLarge、UIContentSizeCategory.accessibilityExtraLarge、UIContentSizeCategory.accessibilityExtraExtraExtraLarge。iPhone 375pt窄屏与常规宽屏、横竖屏；iPad全屏横竖屏和实际可用最窄多任务窗口，另以320pt内容容器测窄布局。记录实际point尺寸，不把容器测试当设备验证。长中英文、长错误、键盘出现均可阅读/操作。 |
 | 外观 | 最低与较新系统均浅/深色、标准对比度；较新系统补浅/深色 × 提高对比度，并开关减少透明度核对内容可读，大字体 + 窄容器 + 深色组合。动态文本颜色不丢失，错误不只靠颜色，关键动作可识别；若使用自定义 accent，完整补同矩阵。 |
 | B01/B02 | 合成任务手动触发完成与失败；忙碌期间快速重复点击/辅助激活不重复调用，禁用零调用；破坏性role与名称可理解，无通用强制确认。回调计数证据与实际触屏证据分别记录。 |
 | F01/F02 | 空必填、错误格式、修正重提、长错误、失败后草稿保留；Next/Done、离散选择草稿、键盘遮挡、脏草稿继续/放弃、成功关闭与归焦。合成规则不变成库内业务规则；提交期间不重复保存、不退出丢草稿。 |
@@ -42,9 +48,51 @@ UIKit规范按用户纠正更新；UIKit候选原生构建、运行和组件验�
 | iPad（A16）/ iPadOS27.0 复查 | 显式boot/install/launch后UIKit界面可见；重测5项通过 | UI测试将启动等待调整为30秒，并在未显示首屏时立即失败，避免级联滚动错误。尚未确定首次失败根因；不声称修复了已定位的产品缺陷。 |
 | 干净源码归档 / iPhone SE / iOS27.0 | 将fded02a用git archive导出、新建DerivedData，5项测试通过 | 相对Package消费链路可独立构建；无复制工作区实现或挪用旧SwiftUI结果。 |
 | 干净归档 / iPhone Duo / iOS27.1 | **未完成**：工具调用300秒超时 | 遗留的本任务测试进程已终止；无最终成功结果，不计为通过。 |
-| iOS/iPadOS17.0、iPadOS27.1 | **未验证，仍阻塞#35完成** | 缺少可用目标运行环境的既有问题仍在，不能由27.0结果代替。 |
+| 历史 iOS/iPadOS17.0、iPadOS27.1 缺口 | 当时未验证 | 17.0 仍待验证；iPadOS27.1 的错误组合由上方 2026-10-27 事实更正取代，旧记录保留时点。 |
 | 剩余窗口/字号/外观/动态偏好、真机VoiceOver | 未完成 | 逐项按已确认矩阵补证，#36继续等待必要前置。 |
 
 5项测试为：`testPublicColorsRetainNativeTraitAdaptation`（6颜色×4trait组合）、`testCanvasActuallyChangesBetweenLightAndDark`、`testAccentResolvesInheritedTintAtTimeOfUse`（宿主tint改变后重新解析）、`testTextRolesScaleUsingTheConsumersTraits`（4角色从Large到最大辅助字号）及 `testUIKitGalleryShowsContentAndScrollsToEnd`（标题、末项可命中、标签存在）。UI测试不证明全局无裁切/重叠或真实VoiceOver可用。
 
 只公开脱敏文字摘要；原始工具日志、截图、xcresult及设备标识不上传。没有发布、没有合并基础候选，也没有开始#36组件实现。
+
+
+## UIKit 验收增量 · 2026-10-27
+
+公开基线为 [21d17a3](https://github.com/linhay/rhine-design-ios/commit/21d17a3b9a6f67881d4966ccb3772dde43070261)，本轮新增 UI 验收用例与记录，公开产品和样例实现未改。工具链仍为 Xcode 27.1 / Swift 6.4 / Swift 6 模式。原始结果、源码差异及制品摘要保留在被忽略的 `.local/validation-20261027/`。各轮测试源码通过 SHA-256 清单绑定；后续测试补充不回溯改变旧运行的覆盖范围。
+
+| 检查 | 状态 | 证据边界 |
+| --- | --- | --- |
+| 当前工作区 / iPhone Duo / iOS 27.1 / 原有 5 项测试 | PASS | 新 DerivedData 构建和测试成功，4 项 tokens 单元测试与 1 项滚动消费测试通过。 |
+| 21d17a3 干净源码归档 / iPhone Duo / iOS 27.1 | PASS | `git archive` 独立导出并使用另一 DerivedData，5 项通过。补齐本修订的干净包消费证据；2026-10-26 的超时仍保留，根因未确认。 |
+| Duo / 27.1 浅深外观实时切换、默认字号旋转 | FAIL | 两次检查均未通过：请求 Dark 后仍显示 Light；设备报告横屏而窗口仍为 466×678pt。截图也保留浅色竖屏。当前仅确认环境中的现象，尚不能归因为 UIKit tokens 或样例实现缺陷。 |
+| SE（第3代）/ 27.0 对照检查 | PASS（断言） | 相同初版测试的 2 项通过；浅/深切换不重启，375×667 与 667×375pt，末项可命中、长文横向边界检查通过。深色首屏截图已实看；横屏截图与报告窗口比例不一致，**完整视觉验收仍未通过**。 |
+
+补收完整结果：
+
+| 检查 | 状态 | 证据边界 |
+| --- | --- | --- |
+| Duo / 27.1 四档竖屏字号 | PASS（4 项断言） | `portrait-fonts27_1.xcresult` 完整收尾，0 失败/0 跳过；实际 trait 回读与滚动可达性通过。最大辅助字号首屏及末项截图已审阅，所见内容自然换行；不外推整页逐行视觉通过。 |
+| iPad A16 / 27.0 单设备 UI | FAIL（6 通过/1 失败） | `ipad-ui27_0.xcresult` 完整收尾。四档字号、默认字号旋转和滚动消费通过；外观切换请求 Dark 后仍读到 Light。窗口为 820×1180 / 1180×820pt；横屏截图异常仍保留，不计完整视觉通过。 |
+| Duo 系统命令外观与 Device Hub 旋转 | PASS（有界交叉检查） | 同一公开样例进程中，系统外观改为深色后显示 Dark，Device Hub 旋转后主屏截图为 2034×1398 像素且正文重新排版。没有覆盖 app traits、修改产品代码或以重启代替实时响应；这不消除 XCTest 路径失败，也未确认其根因。 |
+
+Duo 存在多个显示面。`simctl io` 不指定显示面时本次选到 LCD-1，产生黑屏；使用 `--display=primary` 可得到样例所在屏幕。截图必须核对显示面与稳定后的实际内容；首次紧随外观命令采集到旧状态，后续已稳定截图才显示 Dark。旧黑屏和首次截图保留，不作为产品失败或通过证据。
+
+双设备整套运行的控制台在后期才刷新用例结果：SE / 27.0 的 11 项（4 单元 + 7 UI）全部通过，iPad / 27.0 的 4 单元与最大辅助字号 UI 检查通过。执行者误将延迟输出判断为启动停滞，约 5 分钟时中断，结果包未完整收尾；该次只能引用已输出的用例结果，不能声明整套 PASS，也不能把中断归为产品失败。后续改为单设备运行保留完整结果。
+
+新增回归将四档字号（Large、XXXL、Accessibility XL、Accessibility XXXL）竖屏检查与旋转检查分开；字号启动参数必须由样例实际 UIKit trait 回读确认。测试检查末项可滚动到达、正文存在及正文/末项横向边界，并保留首屏与末项截图。它不证明所有文字无裁切、重叠，不能替代视觉审阅、实际系统设置切换或 VoiceOver。
+
+### 剩余缺口与处理顺序
+
+1. **最低系统阻塞**：可用模拟器中未发现 iOS/iPadOS 17.0；按官方路径执行 `xcodebuild -downloadPlatform iOS -buildVersion 17.0` 返回该版本不可下载（exit 70）。最低 17.0 声明与待验收状态保留。iPadOS27.1 不再列作待下载环境：它是已更正的平台组合错误，当前 iPad 按真实 27.0 simulator 继续验收。
+2. **Duo 动态环境异常**：定位外观/旋转请求与实际 app 状态不一致；同时核对横屏截图采集异常。未定位前保留失败，不通过强制覆盖样例 traits 让系统切换测试变绿。
+3. **本地矩阵待补**：大字号横屏、iPad 实际最窄多任务窗口、独立 320pt 内容容器；浅/深 × 提高对比度、减少透明度、实际 Reduce Motion 开关的读取与变化。颜色 trait 单元测试不替代这些真实环境检查。
+4. **真机与人工验收**：设备清单存在已配对的较新系统 iPhone，但未发现 17.0 或 iPad 真机；配对/连接不等于已安装本候选或完成验收。VoiceOver 阅读顺序/语义和真实触控仍未验证，模拟器与自动测试不能替代。
+5. **范围边界**：按钮/表单/空状态、键盘与提交/退出交互属于 #36，本轮 #35 基础样例没有这些组件，记为本轮 N/A；没有据此宣称完整组件矩阵通过。
+
+PR #1 仍为 Draft；CodeRabbit 的成功状态对应跳过 Draft 审查，不算原生 CI 或人工审阅通过。本轮不关闭 #35，不开始 #36，不合并、发布或升级消费方。
+
+### 2026-10-27 窄窗口回归补充
+
+本轮把窄内容预览固定为真实 `320pt` 外层容器，正文在 section 内的可用宽度为 `288pt`；SE / iOS 27.0 的最大辅助字号窄内容回归重跑为 1 项通过。iPad A16 / iPadOS 27.0 使用系统可见的窗口右下角拖拽句柄，保留实际约 `375×839pt` 窄窗口的首屏、滚动末项和页尾整屏截图，窗口用例重跑为 1 项通过。一次早期失败来自窗口移动后 XCTest 子元素与滚动容器采用不同坐标空间，已移除不稳定的跨空间 X 坐标断言，保留正文宽度、滚动可达性和独立整屏截图；该失败结果仍保留在本地证据目录，不改写为产品失败。
+
+Duo / iOS 27.1 的系统命令交叉检查继续保留浅/深色、对比度和大字号稳定截图；XCTest 外观/旋转路径的失败现象仍未定位，不能据此宣称完整外观矩阵通过。新增窄容器与 iPad 系统窗口证据不覆盖最低 17.0、真机 VoiceOver 或 #36 组件行为。

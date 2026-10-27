@@ -27,3 +27,9 @@ iOS 的规范、tokens、原生实现、样例、版本和验收独立于 Web/Re
 - 原生设计依据：[Buttons](https://developer.apple.com/design/human-interface-guidelines/buttons)、[Text fields](https://developer.apple.com/design/human-interface-guidelines/text-fields)、[Typography](https://developer.apple.com/design/human-interface-guidelines/typography)、[Accessibility](https://developer.apple.com/design/human-interface-guidelines/accessibility)。本规范具体组件范围、间距、状态责任与矩阵为已确认的项目规则，不是Apple原文或已通过的运行结果。
 
 本规范采用纯文字，不新增截图/录屏/附件，不复制私人消费源码或配置。实施阶段的图片、日志与元数据仍需逐项检查；已有研究外链可访问不等于完成全部媒体审计。
+
+## 运行矩阵事实更正 · 2026-10-27
+
+本节取代历史记录中将 `iOS/iPadOS 27.1` 视为统一设备矩阵的条目。[Apple Xcode 27.1 发布说明](https://developer.apple.com/documentation/xcode-release-notes/xcode-27_1-release-notes) 列出 iOS 27.1、iPadOS 27 SDK；[Apple 的 Duo 说明](https://developer.apple.com/news/?id=rfb1rooi) 明确 27.1 为 Duo 形态提供专属支持。[系统发布记录](https://support.apple.com/en-by/100100) 也将 iOS 27.1 限定为 iPhone Duo，并另列 iPadOS 27.0.1 与后续 27.2，不能声称存在通用 iPadOS 27.1。
+
+固定 Xcode 27.1 / Swift 6.4 / Swift 6 不变；当前固定工具链的较新系统模拟器矩阵为 Duo / iOS 27.1、普通 iPhone 与 iPad / 27.0，逐项记实际版本。27.0 模拟器不冒称 27.0.1 或 27.2 真机，也不称为当前最新系统。最低 iOS/iPadOS 17.0、iPhone/iPad 类别、窗口/方向/字号/外观/动态偏好与真机人工验收维度不变。未来工具链与系统升级另记录；本次更正不抬高下限、不消除未执行的检查。
