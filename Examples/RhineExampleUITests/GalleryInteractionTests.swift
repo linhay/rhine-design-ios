@@ -7,15 +7,32 @@ final class GalleryInteractionTests: XCTestCase {
         let app = XCUIApplication()
         app.launchArguments = ["--gallery-tab=\(tab)", "-UIPreferredContentSizeCategoryName", large ? "UICTContentSizeCategoryAccessibilityXXXL" : "UICTContentSizeCategoryL"]
         app.launch()
-        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 30))
+        XCTAssertTrue(app.scrollViews["gallery.scroll"].waitForExistence(timeout: 30))
         return app
     }
     private func reach(_ element: XCUIElement, in app: XCUIApplication) {
-        for _ in 0..<20 {
-            if element.isHittable { return }
-            app.scrollViews.firstMatch.swipeUp()
+        let scroll = app.scrollViews.firstMatch
+        for _ in 0..<30 {
+            let viewport = scroll.frame
+            let target = element.frame
+            // A large swipe can pass a target in short iPad windows. Move back toward it.
+            if target.midY < viewport.minY + 16 {
+                scroll.swipeDown(velocity: .slow)
+            } else if target.midY > viewport.maxY - 16 {
+                scroll.swipeUp(velocity: .slow)
+            } else if element.isHittable {
+                return
+            } else {
+                scroll.swipeUp(velocity: .slow)
+            }
         }
-        XCTAssertTrue(element.isHittable)
+        XCTFail("Could not reach \(element.identifier)")
+    }
+    private func selectTab(_ title: String, in app: XCUIApplication) {
+        // Regular-width iPad presents native floating tabs as cells, not a TabBar.
+        let tab = app.descendants(matching: .any).matching(identifier: title).firstMatch
+        XCTAssertTrue(tab.waitForExistence(timeout: 5))
+        tab.tap()
     }
     private func capture(_ name: String) {
         let attachment = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
@@ -25,12 +42,12 @@ final class GalleryInteractionTests: XCTestCase {
         let app = launch()
         XCTAssertTrue(app.staticTexts["让界面自然生长"].exists)
         capture("gallery-overview")
-        app.navigationBars.buttons["预览"].tap()
+        app.buttons["预览"].tap()
         XCTAssertTrue(app.staticTexts["换个视角"].waitForExistence(timeout: 5))
         app.segmentedControls.buttons["深色"].tap()
         app.buttons["恢复跟随系统"].tap()
         app.navigationBars.buttons["完成"].tap()
-        app.tabBars.buttons["按钮"].tap()
+        selectTab("按钮", in: app)
         XCTAssertTrue(app.staticTexts["每个动作，都有回应"].exists)
     }
     func testTaskLoadingFailureAndRetry() {
@@ -104,7 +121,13 @@ final class GalleryInteractionTests: XCTestCase {
         reach(app.buttons["form.open"], in: app); app.buttons["form.open"].tap()
         let name = app.textFields["form.field.0"]
         reach(name, in: app); name.tap(); name.typeText(" UI")
-        XCTAssertTrue(app.keyboards.firstMatch.exists)
+        let keyboardVisible = app.keyboards.firstMatch.waitForExistence(timeout: 5)
+        capture("gallery-form-active-keyboard")
+        if !keyboardVisible {
+            let hierarchy = XCTAttachment(string: app.debugDescription)
+            hierarchy.name = "keyboard-missing-hierarchy"; hierarchy.lifetime = .keepAlways; add(hierarchy)
+        }
+        XCTAssertTrue(keyboardVisible)
         // Native return-key routing must move focus through the form.
         name.typeText("\n")
         app.textFields["form.field.1"].typeText("\n")
@@ -137,7 +160,7 @@ final class GalleryInteractionTests: XCTestCase {
         reach(long, in: app)
         capture("gallery-buttons-accessibility")
         long.tap()
-        app.tabBars.buttons["状态"].tap()
+        selectTab("状态", in: app)
         reach(app.buttons["添加示例收藏"], in: app)
         capture("gallery-empty-accessibility")
         app.buttons["添加示例收藏"].tap()
