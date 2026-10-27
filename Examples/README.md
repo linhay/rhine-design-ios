@@ -26,5 +26,24 @@ Rhine Design 的可交互 UIKit 展示项目。使用本地 `RhineDesign` Swift 
 - `--gallery-tab=0` 到 `--gallery-tab=3`：直接进入一个展示分区，供复现和 UI 测试使用。
 - `GalleryInteractionTests`：展示导航、预览、重复提交门禁、表单校验/失败保留/取消/成功、空状态恢复、大字体可达性。
 - `ComponentBehaviorTests`：按钮点击与辅助激活共用门禁、字段状态不丢输入、宿主更新不产生伪用户事件、无回调不呈现空动作。
+- `SystemEnvironmentTests`：显式配置模拟器后检查 App 实际读取的外观、对比度、减少动态和减少透明度。未提供四个预期值时标记 SKIPPED，不能计为通过。
+
+键盘回归点击真实软件键盘的 Next/Done，再通过输入后的字段值确认焦点移动；同时要求字母键和当前字段可命中。连接硬件键盘、仅存在 Keyboard 元素或注入换行不代表软件键盘遮挡验证通过。
+
+系统环境用例从测试运行器环境接收预期值。例如，将目标模拟器实际配置为浅色、标准对比度、关闭减少动态与透明度后，从源码仓运行：
+
+```sh
+TEST_RUNNER_RHINE_EXPECT_APPEARANCE=Light \
+TEST_RUNNER_RHINE_EXPECT_CONTRAST=Standard \
+TEST_RUNNER_RHINE_EXPECT_MOTION=Off \
+TEST_RUNNER_RHINE_EXPECT_TRANSPARENCY=Off \
+xcodebuild -project Examples/RhineExample.xcodeproj -scheme RhineExample \
+  -destination 'platform=iOS Simulator,name=<目标模拟器名称>' \
+  -parallel-testing-enabled NO \
+  -resultBundlePath .local/system-environment.xcresult \
+  -only-testing:RhineExampleUITests/SystemEnvironmentTests test
+```
+
+有效预期分别为 `Light/Dark`、`Standard/Increased`、`Off/On`、`Off/On`。测试只读真实系统值，不配置偏好或覆盖 traits。启动读回不替代运行中通知响应；测试后还原为运行前的系统设置。
 
 原始 xcresult、日志和截图放在被忽略的 `.local/`；不上传本机路径和设备标识。界面预览、测试断言、视觉审阅和真实辅助技术证据分别记录。

@@ -124,3 +124,35 @@ iPad A16 / iPadOS 27.0 的分轮检查单独保留：
 测试适配提交 `3ac7908` 在新的 DerivedData 中重跑 SE / iOS 27.0 的全部 7 项 Gallery UI 用例，**7 PASS / 0 FAIL / 0 SKIPPED，exit 0、完整 xcresult**。公共组件与 App 实现仍是 `a6c9ba6` 中的源码，之前 8 项单元测试的实现未改；新旧测试清单和最终 App 二进制摘要分别保存。它不覆盖上述 iPad 失败，也不将首次失败的根因统一解释为平台类型差异。
 
 iPad 单独键盘复核在加入最多 5 秒等待后发现 Keyboard 元素，但真实屏幕只显示输入辅助区，随后 Next 输入的空闲等待停滞。元素存在不能证明屏幕键盘布局验收，相关失败/停滞保留，仍需继续排查。没有为了让测试通过修改 App 的键盘、设备 traits 或跳过断言。
+
+## 软件键盘、系统偏好与窗口验收增量 · 2026-10-27
+
+验收测试提交 `2d20292`。本轮公开组件与 App 实现仍为 `24a5213` 所含源码；只修正、扩充 UI 验收用例和复现说明，没有通过修改产品 traits、隐藏状态或跳过断言让测试通过。固定 Xcode 27.1 / Swift 6.4 / Swift 6，全部数据为合成输入。各轮测试源码清单、App / 测试二进制 SHA-256、日志、录屏和结果包保存在忽略的 `.local/acceptance-20261027/`；新增测试不追溯计入旧运行。
+
+| 场景与证据名称 | 结果 | 实际覆盖 |
+| --- | --- | --- |
+| SE 第3代 / iOS 27.0 / `phone-light-standard` | PASS：8 Gallery + 1 系统读回，完整 xcresult、exit 0 | 浅色、标准对比度、减少动态/透明度关闭；全部原有交互及新增加载失败、权限说明恢复动作。 |
+| iPad A16 / 27.0 / `ipad-dark-high-reduced` | Gallery 8 PASS；系统读回 1 FAIL | 深色、提高对比度、减少动态/透明度开启；系统断言错误地期待 `High`，实际标签为 `Increased`。保留失败，不当作产品故障。 |
+| iPad / `ipad-dark-high-system`、`ipad-light-high`、`ipad-dark-standard`、`ipad-light-standard` | PASS：分别 1、2、3、2 项，均完整收尾 | 修正预期标签后逐项读回真实系统值；覆盖浅/深 × 标准/提高对比度，并在减少动态开启/关闭下操作任务成功/失败、草稿退出、键盘保存。各组合用例数量不同，不是完整笛卡尔积。 |
+| iPad 全窗口 / `keyboard-native-return` | PASS：1 项，完整 xcresult | 点击软件键盘 Next/Done，以后续输入落入正确字段确认焦点移动，完成开关/选择、保存、重新打开与口令清空。后续用例进一步要求字母键和当前字段可命中。 |
+| iPad 375×486pt 实际系统窗口 / `ipad-small-adaptive-drag` | PASS：2 项，完整 xcresult | 软件键盘完整保存流程，以及最大辅助字号长按钮与空状态恢复动作；全屏截图核对窗口、完整字母键盘与当前输入字段。它不替代大字号下所有字段和最小窗口的组合检查。 |
+| Duo / iOS 27.1 / `duo-gallery` | PASS：8 Gallery，完整 xcresult | 新增组件的导航、任务、校验、退出、软件键盘、选择、保存、空状态及大字号动作。 |
+| iPad / `ipad-large-keyboard`；Duo / `duo-expanded-large-keyboard` | PASS：各 1 项、每项 3 档字号，完整 xcresult | XXXL、Accessibility XL、Accessibility XXXL，实际 UIKit 字号读回；靠后 URL 字段输入保留、软件键盘字母键和字段可命中、保存入口可达、放弃草稿。Duo 展开状态为 951×669pt，实际显示面录屏另存。 |
+| SE / `phone-large-keyboard-reboot` | PASS：1 项、3 档字号，完整 xcresult | 重启本任务专用模拟器后，三档实际字号读回、靠后字段输入与软件键盘/保存入口、放弃草稿均通过。重启前定位失败仍保留，不声称已确定根因。 |
+| iPad / `ipad-layout-boundaries` | 2 PASS / 1 FAIL，完整 xcresult | 深色 320pt 最大字号预览和最大字号旋转动作通过；首次 URL 用例错误假定点按后光标一定在末尾，失败保留。修正为检查插入文字及原文保留后，`ipad-large-keyboard` 通过。 |
+| SE / `phone-layout-boundaries` | 逐项 1 PASS / 2 FAIL；结果包未完整收尾 | 深色 320pt 最大字号预览通过；URL 光标假设失败；旋转后手势切到其他标签，长按钮查询失败。用例已全部输出结束后，进程仍持续解析包而未收尾，终止该进程；不宣称整套 PASS。 |
+
+### 有效控制路径与失败保留
+
+- 原 `typeText("\n")` 路径发生 XCTest 空闲等待停滞。现在点击实际软件键盘返回键，并核对后续字段值、字母键可命中、Done 收起和保存结果。已验证这条原生交互路径可用，未证明旧注入换行路径的具体根因，也没有修改 App 键盘代理。
+- 系统偏好使用每模拟器的 `com.apple.Accessibility` 中 `ReduceMotionEnabled` / `EnhancedBackgroundContrastEnabled` 配置，外观/提高对比度使用 `simctl ui`；随后启动 App 读取真实 `UIAccessibility` / traits。读回 On/Off 与交互对照分别保留。该方法验证启动环境，不冒称已验证同一进程内的偏好通知响应；复现用例及环境变量见 [样例说明](../Examples/README.md)。
+- 小窗口诊断观察到：滚动容器仍使用屏幕坐标，子元素在滚动后改报窗口内坐标；整页手势还会越过邻近入口。测试优先原生命中检查，必要时换算坐标，远处翻页、近处小幅拖动。保留旧 2 FAIL、优先命中版本 2 FAIL、小幅拖动版本 1 PASS / 1 FAIL，最终有界回归单独记录，不回写旧结果。
+- Duo 展开时原生返回按钮位于侧边工具栏；新增字号检查初次只查询 NavigationBar，导致 1 FAIL，修正查询后通过。显示面也必须现场枚举：本次展开屏为 `primary-1`，`primary` / `XCUIScreen.main` 捕获黑屏，首次录屏仅有静止帧；有效展开屏录屏保留完整过程。既往折叠状态 `primary` 有效的结论不能机械应用到所有姿态。
+- 安全输入阶段部分截图没有呈现键盘/口令，而自动化能读到已聚焦的掩码值、可命中的字母键并完成 Done；原因未确认。该截图不独立计作视觉通过，普通字段的键盘截图与实际操作另存。
+- 两次 SE 字号尝试的失败及结果未收尾分别保留，不把重启后的新结果当作已确认旧异常根因。
+
+### 仍未满足的完成条件
+
+最低 iOS/iPadOS 17.0、真实 VoiceOver 导航/激活/错误/归焦及真机触控仍未验证。当前没有可用的 17.0 runtime，声明下限不变，不要求 Apple 登录作为本地模拟器工作的前置。SE 横屏控制与实际画面/命中的一致性、同一进程内系统偏好切换，以及剩余长错误/最窄窗口/最大字号的组合仍须补证。系统模拟授权只证明合成恢复流程，不证明真实权限处理。
+
+因此 #35/#36 继续 OPEN，PR #1/#2 继续 Draft；本轮提交与推送验收改进，但不合并、不关闭、不发布或升级消费产品。
