@@ -5,6 +5,7 @@ import UIKit
 final class FoundationConsumptionTests: XCTestCase {
     func testUIKitGalleryShowsContentAndScrollsToEnd() {
         let app = XCUIApplication()
+        app.launchArguments = ["--foundation-diagnostics"]
         app.launch()
         guard app.staticTexts["Independent UIKit foundations"].waitForExistence(timeout: 30) else {
             XCTFail("The UIKit gallery did not reach its initial screen.")
@@ -119,8 +120,9 @@ final class FoundationConsumptionTests: XCTestCase {
     private func launchGallery(category: UIContentSizeCategory? = nil,
                                narrowContent: Bool = false) -> XCUIApplication {
         let app = XCUIApplication()
+        app.launchArguments = ["--foundation-diagnostics"]
         if let category {
-            app.launchArguments = ["-UIPreferredContentSizeCategoryName", category.rawValue]
+            app.launchArguments += ["-UIPreferredContentSizeCategoryName", category.rawValue]
         }
         if narrowContent {
             app.launchArguments.append("--preview-narrow-content")
