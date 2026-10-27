@@ -36,3 +36,17 @@
 ## UIKit 实现边界
 
 公开组件以 UIView / UIControl（及必要的 UIViewController 组合）为入口；不要求 UIHostingController、不依赖 SwiftUI。控件状态变化在主线程执行。文字采用 UIFont 文本样式和 Dynamic Type，布局使用 Auto Layout、方向性边距及安全区域，避免固定行高。宿主负责 UITextFieldDelegate / UIControl 事件的校验、resignFirstResponder / becomeFirstResponder 焦点编排及键盘布局；可访问标签/值/错误用 UIKit accessibility API，UI测试与真实 VoiceOver 各自留证。
+
+## UIKit 公开候选 · 完整展示项目
+
+2026-10-27 用户明确要求完整展示样式的示例，首批组件实现现在与 #35 剩余环境验收独立推进；本节取代“尚未开始实现”的状态，不改变未完成验收或未发布的事实。
+
+| API | 输入 / 输出 | 状态责任 |
+| --- | --- | --- |
+| `RhineButton: UIControl` | 标题、可选系统符号、三种 Style、独立 Role、`isEnabled`、`isLoading`、`loadingText`；`onActivate` | 触摸及 `accessibilityActivate()` 都经 `activate()` 同一门禁。仅可用且非忙碌时执行同步回调。宿主必须同步进入忙碌态，负责完成/失败。回调是此组件的动作出口，不发送额外 UIControl 事件。 |
+| `RhineTextField: UIView` | 持久标题、Purpose、说明、`error`、`text`、`isEnabled`；公开 `input: UITextField` 与 `onChange` | 原生 delegate、returnKeyType、焦点与键盘编排归宿主；字段自身不修剪、校验或改写输入法组合文本。 |
+| `RhineToggle: UIView` | 标题、说明、`error`、`isOn`、`isEnabled`；公开 `control: UISwitch` 与 `onChange` | 宿主赋值只更新展示，不模拟用户回调。 |
+| `RhineChoice: UIView` | 非空、稳定且唯一 ID 的 Option 列表、合法 `selectedID`、说明/错误、启用态；`onChange` | 原生菜单单选，必须始终选择列表中的有效 ID；宿主更新不发回调。 |
+| `RhineEmptyState: UIView` | 必填标题、可选说明/符号、empty/search、可选动作标题及回调 | 系统 UIContentUnavailableConfiguration 内容视图加公开 RhineButton。只有文案与回调同时提供才显示动作；加载/权限/失败仍在宿主中组合。 |
+
+展示工程见 [Examples](../Examples/README.md)。公共颜色与字体仍为 UIKit 原生动态类型，状态和控件应在主线程读写。候选 API 尚未发布；最低 17.0 与真实 VoiceOver 等证据缺口见 Validation。
