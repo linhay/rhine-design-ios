@@ -200,3 +200,20 @@ iPad 单独键盘复核在加入最多 5 秒等待后发现 Keyboard 元素，�
 **排除与失败保留**：首次观察时，已安装 App 主二进制匹配构建，但 debug dylib 的摘要及 Mach-O UUID 不匹配，因此首次观察不计入当前候选 PASS。重新安装指定制品后才重复上述操作；旧安装身份差异的成因未确认。期间发生屏幕捕获错误、控制通道无窗口及超时；重新安装后的坐标点击取消也被控制通道拒绝，未完成退出确认，不计为取消、草稿保留/丢弃或保存完成的新增通过证据。工具错误不直接判定为产品故障。
 
 收尾恢复系统 Large、浅色标准对比度、减少偏好关闭，重新启动正常 Gallery 并恢复竖屏，截图确认。仅使用一台本任务模拟器。本节不外推长错误、完整窗口/字号/方向组合、真实 VoiceOver 或真机触控。最低 iOS/iPadOS 17.0、真实辅助技术/触控及剩余矩阵仍未满足；#35/#36 保持 OPEN，PR #1/#2 保持 Draft，未合并或关闭。
+
+
+## iPad 深色大字号长错误与横屏草稿退出 · 2026-10-28
+
+本节补充 A01/F02 的有界组合，取代这两个具体场景尚无证据的状态，不消除其他矩阵缺口。CUA 检查源码 `9d52c74`，新增定向用例源码 `ac7451b`；公共组件和 Gallery 实现未改。Xcode 27.1，iPad A16 / iPadOS Simulator 27.0（24A434），Dark / Increased，Reduce Motion 与 Reduce Transparency 均 On。先关闭任务 SE，再启动任务 iPad；未启动第二台本任务模拟器。
+
+| 检查 | 结果与边界 |
+| --- | --- |
+| 系统字号最大档、实际全窗口竖屏与横屏长错误 | PASS（CUA 操作与画面）：定位长邮箱错误，两个方向的截图均可读完全文，包括末句，并与后续只读标题分开。该轮未新采集 point 尺寸，不作最窄窗口证据。 |
+| 横屏、Accessibility XXXL 草稿继续/放弃 | PASS：新增 `testLargestTextLandscapeDraftContinueAndDiscard` 定向测试。清空必填后取消，确认两项选择可命中；继续编辑后两字段仍空，再取消并放弃，原资料摘要不变。断言窗口宽大于高，退出确认截图另行实看，标题、说明及两动作完整可读。字号由测试启动参数设定；不冒充本轮系统偏好通知测试或真实 VoiceOver。 |
+| 原生控制与最窄窗口尝试 | 未完成：Device Hub 连接/选择曾超时；拖拽分别返回窗口定位失败或无窗口，未完成新的最窄窗口尺寸确认。编辑器导航动作在画面可见但未出现在该控制通道的 AX 树中，字段 Cancel 辅助动作未关闭编辑器。手动段不计作退出通过；后续 XCTest 是独立证据，未确认前述工具异常根因。 |
+
+测试首次调用因重复 `-resultBundlePath` 参数在执行前失败。移除重复参数后，XcodeBuildMCP 返回 **1 PASS / 0 FAIL / 0 SKIPPED**，但其临时结果包随后已被清理。为保留可复查证据，对同一已构建测试制品执行单设备 `test-without-building`，指定 90 秒默认/120 秒最大单用例限时；独立复跑 **1 PASS / 0 FAIL / 0 SKIPPED，exit 0**，完整结果包及两个截图附件已导出。两次通过不写成两个不同场景，参数失败与旧超时保留。
+
+本地证据在忽略的 `.local/ipad-boundaries-20261028/`：手动步骤、竖横屏长错误截图、源码及主二进制/debug dylib 摘要、测试源码/制品摘要、日志、`landscape-draft.xcresult` 和附件。测试后已安装主二进制/debug dylib 均匹配指定构建。复现选择 `RhineExampleUITests/GalleryInteractionTests/testLargestTextLandscapeDraftContinueAndDiscard`，关闭并行；结果包保留方法见样例 README。
+
+收尾恢复原 Dark / Large / Increased、两项减少偏好 On、竖屏 Gallery，截图确认。仍缺最低 iOS/iPadOS 17.0（本轮 runtime 清单仍只有27.0/27.1）、真机 VoiceOver/触控、最窄窗口尺寸确认及其他未覆盖的布局/外观/状态组合。没有新发现需要修改产品源码的故障；#35/#36 保持 OPEN，PR #1/#2 保持 Draft，未合并、关闭、发布或升级消费产品。

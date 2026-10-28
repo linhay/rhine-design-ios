@@ -8,6 +8,8 @@ Rhine Design 的可交互 UIKit 展示项目。使用本地 `RhineDesign` Swift 
 
 验收复用已有安装时，先核对实际源码清单与构建制品，再比较已安装 App 的主二进制及 `*.debug.dylib`（如存在）的 SHA-256。只匹配主二进制不足以证明实现一致；仅执行 build 不会替换设备安装。发现不匹配时，安装指定构建并重新执行受影响的检查，旧观察保留但不能归入当前候选通过证据。
 
+需要长期保留 XCTest 截图与结果包时，确认执行工具是否自动清理临时 `xcresult`。本机 XcodeBuildMCP `test_sim` 自动添加 `-resultBundlePath`，不要在 `extraArgs` 重复传入；成功摘要不等于结果包仍可读取。若工具清理了结果包，可对同一已构建测试制品执行有界 `xcodebuild test-without-building`，指定 `.local/` 结果路径并保存日志；分开记录两次执行，重新核对制品摘要。
+
 ## 四个展示分区
 
 | 分区 | 可核对内容 | 操作 |
