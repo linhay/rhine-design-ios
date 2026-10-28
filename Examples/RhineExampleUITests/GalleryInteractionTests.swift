@@ -130,6 +130,33 @@ final class GalleryInteractionTests: XCTestCase {
         XCTAssertTrue(app.buttons["form.open"].waitForExistence(timeout: 5))
         XCTAssertEqual(app.staticTexts["form.summary"].label, before)
     }
+    func testLargestTextLandscapeDraftContinueAndDiscard() {
+        let original = XCUIDevice.shared.orientation
+        XCUIDevice.shared.orientation = .landscapeLeft
+        defer { XCUIDevice.shared.orientation = original }
+        let app = launch(tab: 2, large: true)
+        XCTAssertGreaterThan(app.windows.firstMatch.frame.width, app.windows.firstMatch.frame.height)
+        let before = app.staticTexts["form.summary"].label
+        reach(app.buttons["form.open"], in: app); app.buttons["form.open"].tap()
+        reach(app.buttons["清空必填"], in: app); app.buttons["清空必填"].tap()
+        app.navigationBars.buttons["取消"].tap()
+        let confirmation = app.alerts["放弃未保存的修改？"]
+        XCTAssertTrue(confirmation.waitForExistence(timeout: 5))
+        XCTAssertTrue(confirmation.buttons["继续编辑"].isHittable)
+        XCTAssertTrue(confirmation.buttons["放弃修改"].isHittable)
+        capture("landscape-largest-draft-confirmation")
+        confirmation.buttons["继续编辑"].tap()
+        XCTAssertTrue(confirmation.waitForNonExistence(timeout: 5))
+        XCTAssertEqual(app.textFields["form.field.0"].value as? String, "")
+        XCTAssertEqual(app.textFields["form.field.1"].value as? String, "")
+        app.navigationBars.buttons["取消"].tap()
+        XCTAssertTrue(confirmation.waitForExistence(timeout: 5))
+        confirmation.buttons["放弃修改"].tap()
+        XCTAssertTrue(app.buttons["form.open"].waitForExistence(timeout: 5))
+        XCTAssertEqual(app.staticTexts["form.summary"].label, before)
+        capture("landscape-largest-draft-discarded")
+    }
+
     func testEmptyAndSearchActionsRestoreContent() {
         let app = launch(tab: 3)
         let add = app.buttons["添加示例收藏"]
