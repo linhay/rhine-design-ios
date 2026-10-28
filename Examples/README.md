@@ -6,6 +6,8 @@ Rhine Design 的可交互 UIKit 展示项目。使用本地 `RhineDesign` Swift 
 
 用 Xcode 27.1 打开 `RhineExample.xcodeproj`，选择 `RhineExample` scheme 和已安装的 iOS Simulator，运行即可。工程已提交，无需先安装 XcodeGen；新增文件或修改 `project.yml` 时才需在源码仓根运行 `xcodegen generate --spec Examples/project.yml`。目标最低系统 17.0；实际验证范围见 [Validation](../docs/Validation.md)，不将部署目标当作全部系统均已测试。
 
+验收复用已有安装时，先核对实际源码清单与构建制品，再比较已安装 App 的主二进制及 `*.debug.dylib`（如存在）的 SHA-256。只匹配主二进制不足以证明实现一致；仅执行 build 不会替换设备安装。发现不匹配时，安装指定构建并重新执行受影响的检查，旧观察保留但不能归入当前候选通过证据。
+
 ## 四个展示分区
 
 | 分区 | 可核对内容 | 操作 |
