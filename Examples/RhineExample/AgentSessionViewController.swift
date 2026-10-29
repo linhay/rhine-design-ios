@@ -77,6 +77,7 @@ final class AgentSessionViewController: UIViewController, UIScrollViewDelegate, 
         input.input.delegate = self
         input.input.textContentType = nil
         input.input.addTarget(self, action: #selector(revealInput), for: .editingDidBegin)
+        input.input.addTarget(self, action: #selector(editingEnded), for: .editingDidEnd)
         input.onChange = { [weak self] value in self?.model.draft = value; self?.render() }
         send.accessibilityIdentifier = "agent.send"
         send.onActivate = { [weak self] in
@@ -205,6 +206,12 @@ final class AgentSessionViewController: UIViewController, UIScrollViewDelegate, 
     }
     @objc private func revealInput() {
         composer.scrollRectToVisible(input.input.convert(input.input.bounds, to: composer).insetBy(dx: 0, dy: -8), animated: false)
+    }
+    @objc private func editingEnded() {
+        // Committing an IME composition can finish after its last editingChanged callback.
+        // Re-read the final text and gate; ending editing never submits.
+        model.draft = input.text
+        render()
     }
     func textFieldShouldReturn(_ textField: UITextField) -> Bool { textField.resignFirstResponder(); return true }
 

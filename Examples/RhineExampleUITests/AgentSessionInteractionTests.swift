@@ -13,6 +13,14 @@ final class AgentSessionInteractionTests: XCTestCase {
         if large { app.launchArguments.append("--agent-large") }
         app.launch()
         XCTAssertTrue(app.scrollViews["agent.timeline"].waitForExistence(timeout: 30))
+        let actual = app.staticTexts["agent.environment"].label
+        let evidence = XCTAttachment(string: "\(actual)\nWindow: \(app.windows.firstMatch.frame)\nTimeline: \(app.scrollViews["agent.timeline"].frame)")
+        evidence.name = "agent-actual-environment"
+        evidence.lifetime = .keepAlways
+        add(evidence)
+        if let expected = ProcessInfo.processInfo.environment["RHINE_AGENT_EXPECT_MOTION"] {
+            XCTAssertTrue(actual.contains("减少动态：\(expected)"), "Read actual UIKit preference before exercising the same path")
+        }
         return app
     }
 
@@ -227,12 +235,47 @@ final class AgentSessionInteractionTests: XCTestCase {
         letter.tap()
         XCTAssertTrue((field.value as? String)?.lowercased().contains("q") == true)
         capture("agent-largest-dark-software-keyboard", app: app)
+        // A Chinese keyboard can leave "q" as marked text. Commit it through the
+        // native Done action before reopening the keyboard to exercise sending.
+        finishTyping(in: app)
         let draft = field.value as? String
+        XCTAssertFalse(draft?.isEmpty ?? true)
+        // Some IMEs consume the first Done to confirm the candidate and keep
+        // the keyboard open. Others close it; both paths must remain sendable.
+        if !letter.isHittable {
+            reach(field, in: composer)
+            field.tap()
+        }
+        let reopened = XCTNSPredicateExpectation(
+            predicate: NSPredicate(format: "exists == true AND hittable == true"), object: letter)
+        XCTAssertEqual(XCTWaiter.wait(for: [reopened], timeout: 5), .completed)
         let send = app.buttons["agent.send"]
-        reach(send, in: composer)
+        let ready = XCTNSPredicateExpectation(
+            predicate: NSPredicate(format: "exists == true AND enabled == true"), object: send)
+        XCTAssertEqual(XCTWaiter.wait(for: [ready], timeout: 5), .completed)
+        // isHittable alone permits a partially clipped button. Scroll until its
+        // complete frame is inside the composer and above the actual keyboard.
+        for _ in 0..<10 {
+            let visible = composer.frame
+            let target = send.frame
+            if target.minY >= visible.minY - 1 && target.maxY <= visible.maxY + 1 &&
+                target.maxY <= app.keyboards.firstMatch.frame.minY + 1 { break }
+            let towardTop = target.minY < visible.minY
+            let start = composer.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: towardTop ? 0.3 : 0.7))
+            let end = composer.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: towardTop ? 0.7 : 0.3))
+            start.press(forDuration: 0.01, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.1)
+        }
+        XCTAssertGreaterThanOrEqual(send.frame.minX, composer.frame.minX - 1)
+        XCTAssertLessThanOrEqual(send.frame.maxX, composer.frame.maxX + 1)
+        XCTAssertGreaterThanOrEqual(send.frame.minY, composer.frame.minY - 1)
+        XCTAssertLessThanOrEqual(send.frame.maxY, composer.frame.maxY + 1)
+        XCTAssertLessThanOrEqual(send.frame.maxY, app.keyboards.firstMatch.frame.minY + 1)
         XCTAssertTrue(send.isHittable, "The send action must be reachable while the keyboard is open")
         XCTAssertTrue(letter.isHittable, "Scrolling to send must preserve the visible software keyboard")
+        XCTAssertTrue(send.isEnabled, "A completed draft must be sendable before this action")
+        capture("agent-largest-dark-send-ready-above-keyboard", app: app)
         send.tap()
+        waitForText("等待接受", in: app.staticTexts["agent.sendStatus"])
         XCTAssertEqual(field.value as? String, draft)
         XCTAssertFalse(send.isEnabled)
         capture("agent-largest-dark-send-awaiting-confirmation", app: app)
