@@ -250,6 +250,40 @@ iPad 单独键盘复核在加入最多 5 秒等待后发现 Keyboard 元素，�
 
 `3fb9e31` 已验收 App 主二进制 SHA-256 为 `a171cfff87597bad293cf0c0700e76c4c778a666709e4dc81c5ff84f7e18613e`，debug dylib 为 `f6cdf8a109381c5e754cf5a70c051b49f3e71345215ad2d3bbdcfb8a73ef6d1f`。SE 已安装的两者均匹配构建；这份 App 已归档于 artifacts-3fb9e31，完整源码/工程与测试二进制清单见本地 final-candidate-manifest。最终 `0526003` 的主二进制摘要相同，debug dylib 为 `4d2692cc4bc5a00dd6614d5e5c7ecae7c2bcfc9d770c05db5a51274d73c35249`；App 和测试制品另冻结于 artifacts-final，并由 delivery-candidate-manifest 绑定。test_sim 与固定制品 test-without-building 分开记录，不把同一场景的复跑算作新的覆盖。
 
-SKIPPED：最低 iOS/iPadOS 17.0（本轮运行时清单只有27.0/27.1）、真实 VoiceOver 阅读/激活/归焦与触控、iPad 最窄多任务窗口、实时字号变化及剩余横竖屏/外观组合。本轮只读设备清单有两台物理 iPhone 显示可用，但未核验本候选签名、安装、信任或人工验收；不沿用“所有物理设备不可用”的旧事实，也不把连接可见当通过。既有 Device Hub 最窄窗口拖拽失败、历史超时和 #35/#36 的未完成条件仍保留。
+截至交付文档 `57e4861` 的 SKIPPED：最低 iOS/iPadOS 17.0（当时运行时清单只有27.0/27.1）、真实 VoiceOver 阅读/激活/归焦与触控、iPad 最窄多任务窗口、实时字号变化及剩余横竖屏/外观组合。本轮只读设备清单有两台物理 iPhone 显示可用，但未核验本候选签名、安装、信任或人工验收；不沿用“所有物理设备不可用”的旧事实，也不把连接可见当通过。既有 Device Hub 最窄窗口拖拽失败、历史超时和 #35/#36 的未完成条件仍保留。
 
 N/A：真实协议、主机网络、持久化、多行输入、历史分页与并发授权队列；本项不提供这些实现。合成状态和消费者 loopback 证据不能互相补算。#109 保持 OPEN，PR #4 保持 Draft，依赖 PR #1/#2 也不因本项推进而合并或关闭；不发布、不升级消费产品。
+
+
+### 运行中系统字号与真实横屏补验 · 2026-10-30
+
+本节补充并取代上方 `57e4861` 时点的实时字号、已列明方向组合状态。App 实现为 `0b5d95d`，仍为 UIKit 合成配方，公共产品和 #35/#36 未改。工具链与运行时沿用上节，原件保存在忽略的 `.local/agent-adaptation-20261030/`；运行均为已有构建的 `test-without-building`，每次只启动一台任务模拟器。
+
+真实字号测试由宿主修改并读回系统 `content_size`，每个用例保持同一非空 PID，分别执行底部、真实历史位置和草稿的 Large → 最大辅助字号 → Large。本轮真实系统字号用例未使用字号启动参数或 trait override；只读 accessibility getter 返回当前字体、行高、锚点、偏移和选区。驱动要求指定测试恰好全 Passed、零 skip、完整系统切换及偏好恢复；仅退出码为零不能通过。
+
+本轮确认并修复三项布局问题：
+
+- 父 VC 布局回调先于子滚动内容更新：字号已变为53pt，contentSize仍2731pt，定位后才增长至15797pt；底部因此少滚13066pt。消息栈完成直接子行布局后再恢复原底部或行锚点，重排中间滚动不覆盖锚点。
+- SE横屏实际667×375pt，键盘布局顶部169pt、导航底部78pt，91pt的“查看最新”占满可用高度。紧凑编辑态收起导航，将查看最新放入composer并允许其占据剩余高度；该动作主动结束编辑恢复可见正文，再滚到最新。
+- 最大字号草稿字段被压缩到44pt，而实际字体53pt、行高63.248pt、固有高度73pt。严格反例 `phone-field-negative` 失败；将原生输入竖向抗压缩优先级设为required后恢复73pt，分别滚到完整字段和发送按钮验证，未缩小字体或改公共TextField。
+
+失败保留：首次附件读取不存在键盘失败；首次字号底部行为失败后诊断收集超时，原不完整结果包没有可解析Info.plist，不能冒称完整xcresult。后续时序诊断有完整失败包；临时时序日志已移除。方向键rawValue被输入为字符、点按/长按未移动光标的草稿前置失败保留；最终通过原生空格键触控板移动并读取真实内部索引，再用后续插入证明。授权AX将换行归一为空格，定位改用稳定前缀，完整操作/范围/末尾仍必验。横屏收尾等待系统动画曾超时，保留失败，不因后续测试先终止App再恢复方向而宣称确认了系统根因。后续滚动手势校准与结果另按各包保留，不放宽完整边界、键盘、启用或发送状态断言。
+
+App截图在部分横屏模态中出现方向裁剪；同一阶段的display截图和实际窗口几何另存并实看。不能只按App截图或请求的orientation声称横屏通过。
+
+| 设备与实际环境 | 最终 App 的有界结果 |
+| --- | --- |
+| SE 第3代，Light / Reduce Motion Off，竖屏375×667pt | `phone-live-candidate`：2 PASS / 0 FAIL / 0 SKIPPED。底部跟随、离底历史行及草稿各完成系统字号往返；每个用例 PID 不变，历史锚点容差2pt，内部光标索引、first responder 和草稿保留。最大字号字段73pt高，原生行高63.248pt；后续按保存索引插入并实际发送。 |
+| 同一 SE，系统最大辅助字号，真实横屏667×375pt | `phone-landscape-candidate` 原包为 **1 PASS / 1 FAIL**：只计授权项通过，完整上下文、允许/拒绝及各自确认状态可达；该包的键盘项仍为 FAIL。独立 `phone-landscape-keyboard-pan` 为1 PASS / 0 FAIL / 0 SKIPPED：完整字段、实际软件键盘、完整发送及等待接受；查看最新结束编辑后恢复正文和导航。发送 frame 为(16,68,635,93.5)pt，位于顶部169pt的键盘布局边界上方。 |
+| 同一 SE，系统 Large | `phone-stream-candidate`：1 PASS / 0 FAIL / 0 SKIPPED，追加时底部跟随及真正历史位置保留回归。 |
+| iPad A16，Dark / Reduce Motion On，竖屏820×1180pt | `ipad-live-final`：2 PASS / 0 FAIL / 0 SKIPPED，同进程字号往返、底部、历史、草稿与键盘全部通过。历史行 `agent.message.7.row` 相对顶部始终−30.5pt，滚动偏移786.5→3198.5→786.5pt；实际字体17→53→17pt。草稿内部索引3保持，最大字号字段73pt高。 |
+| 同一 iPad，系统最大辅助字号，真实横屏1180×820pt | `ipad-landscape-final`：2 PASS / 0 FAIL / 0 SKIPPED。模态滚动区580×576pt，重叠分段核对完整上下文；允许/拒绝全文及实际确认状态可达。分别滚到完整字段和发送按钮，发送frame为(230,302,720,93.5)pt，位于键盘布局顶部398pt上方；原生字母键可命中，发送后等待接受、草稿保留且发送禁用。 |
+| 同一 iPad，系统 Large | `ipad-stream-final`：1 PASS / 0 FAIL / 0 SKIPPED，追加时底部跟随及真正历史位置保留回归。 |
+
+以上是每台设备5项、共10项设备×用例通过结果，来自分别列出的结果包，不是一次全绿测试套件或完整组合矩阵；重复复跑不增加覆盖数。两台设备的实时字号驱动各记录6次实际系统切换及恢复。首次 `ipad-live-candidate` 为1 PASS / 1 FAIL：草稿通过，阅读项的两次整屏滑动越过消息到了顶部状态区。调整为有界手势后仍要求真实消息行ID、离底距离和原2pt容差；旧失败包保留。SE发送手势的边缘大步长来回越过目标、过短拖动未启动原生滚动等失败也保留，最终按实际裁剪距离加手势启动余量，不降低几何断言。
+
+制品绑定：App源码为 `0b5d95d`；主二进制 SHA-256 `896eb222ea1a88ed09f0c630867207d4855aaf256db9ffef115c221f84bed9d9`，debug dylib SHA-256 `6b261a376890d6b0e93cd0adbf4fcb99ad0d397a38e1674e47d6844607fb23e6`。本表各包使用同一App，两设备安装后摘要均匹配。`artifacts-candidate` 绑定 `0b5d95d` 测试，供phone-live-candidate及phone-landscape-candidate；`artifacts-candidate-pan` 绑定 `ce9de13` 测试，供phone-landscape-keyboard-pan、phone-stream-candidate及ipad-live-candidate；`artifacts-candidate-history-gesture` 绑定 `3450e3d` 测试，供三个iPad最终包。后两次提交只修正测试手势，App二进制未变。完整结果包、测试源码/二进制摘要、系统读回、安装摘要及冻结制品由本地 `delivery-manifest.json` 逐项关联；历史 candidate-manifest 不覆盖。
+
+收尾读回系统Large；SE保留Light、减少动态Off，iPad保留Dark、减少动态/减少透明度On，测试恢复竖屏。两台任务模拟器均已关闭，其他项目设备未操作。未重试既有失败的最窄窗口拖拽。
+
+**仍为 SKIPPED**：最低iOS/iPadOS17.0、真实VoiceOver阅读/激活/归焦及真机触控、iPad最窄多任务窗口，以及未列出的方向/外观/字号/状态组合。旧修订上的8项模型测试单列保留，本次不冒称在新App上重跑全套模型或交互矩阵。真实服务、持久化、多行输入、分页与并发授权仍为N/A。#109继续OPEN，PR #4继续Draft；依赖PR #1/#2和#35/#36的验收缺口不由本项补算，不合并、关闭、发布或升级消费产品。
