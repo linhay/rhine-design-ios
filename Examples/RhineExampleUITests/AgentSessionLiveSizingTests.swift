@@ -108,10 +108,14 @@ final class AgentSessionLiveSizingTests: XCTestCase {
         assertBottom(app, pid: pid)
 
         let scroll = app.scrollViews["agent.timeline"]
-        scroll.swipeDown(velocity: .slow)
-        scroll.swipeDown(velocity: .slow)
+        // Leave the bottom without traversing the entire larger iPad viewport.
+        // The following assertions, rather than a gesture count, establish history.
+        let start = scroll.coordinate(withNormalizedOffset: CGVector(dx: 0.98, dy: 0.3))
+        let end = scroll.coordinate(withNormalizedOffset: CGVector(dx: 0.98, dy: 0.6))
+        start.press(forDuration: 0.01, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.1)
         XCTAssertGreaterThan(app.staticTexts["agent.stream"].frame.maxY, scroll.frame.maxY + 24)
         let baseline = probe(app)
+        record(app, "history-position-after-gesture")
         XCTAssertTrue((baseline["anchorID"] as? String)?.hasPrefix("agent.message.") == true)
         XCTAssertEqual(baseline["following"] as? Bool, false)
         record(app, "history-baseline")
