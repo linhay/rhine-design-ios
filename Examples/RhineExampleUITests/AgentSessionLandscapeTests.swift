@@ -77,9 +77,12 @@ final class AgentSessionLandscapeTests: XCTestCase {
         target.minY >= viewport.minY - 1 && target.maxY <= viewport.maxY + 1
     }
 
-    private func drag(_ scroll: XCUIElement, upward: Bool) {
-        let start = scroll.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: upward ? 0.8 : 0.2))
-        let end = scroll.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: upward ? 0.2 : 0.8))
+    private func drag(_ scroll: XCUIElement, upward: Bool, distance: CGFloat? = nil) {
+        // Use the scroll margin, away from text-selection and button hit regions.
+        let fraction = min(0.6, max(0.04, (distance ?? scroll.frame.height * 0.6) / scroll.frame.height))
+        let startY: CGFloat = upward ? 0.8 : 0.2
+        let start = scroll.coordinate(withNormalizedOffset: CGVector(dx: 0.99, dy: startY))
+        let end = scroll.coordinate(withNormalizedOffset: CGVector(dx: 0.99, dy: startY + (upward ? -fraction : fraction)))
         start.press(forDuration: 0.01, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.1)
     }
 
@@ -98,7 +101,10 @@ final class AgentSessionLandscapeTests: XCTestCase {
                 XCTFail("The entire control cannot fit in its actual visible scroll viewport", file: file, line: line)
                 return
             }
-            drag(scroll, upward: element.frame.maxY > viewport.maxY)
+            let upward = element.frame.maxY > viewport.maxY
+            let clipped = upward ? element.frame.maxY - viewport.maxY : viewport.minY - element.frame.minY
+            // Include enough travel to begin the native pan before correcting clipping.
+            drag(scroll, upward: upward, distance: clipped + 20)
         }
         capture("landscape-control-unreachable", app: app, elements: [scroll, element])
         XCTFail("The entire control remains clipped or unreachable", file: file, line: line)
@@ -184,6 +190,7 @@ final class AgentSessionLandscapeTests: XCTestCase {
         XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(
             predicate: NSPredicate(format: "exists == true AND enabled == true"), object: send)], timeout: 5), .completed)
         reachFully(send, in: composer, app: app)
+        capture("landscape-send-after-scroll", app: app, elements: [composer, field, send, letter])
         XCTAssertTrue(letter.isHittable, "Reaching send must not dismiss the visible software keyboard")
         XCTAssertTrue(send.isEnabled)
         capture("landscape-largest-send-ready", app: app, elements: [composer, field, send, letter])
