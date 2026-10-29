@@ -217,3 +217,39 @@ iPad 单独键盘复核在加入最多 5 秒等待后发现 Keyboard 元素，�
 本地证据在忽略的 `.local/ipad-boundaries-20261028/`：手动步骤、竖横屏长错误截图、源码及主二进制/debug dylib 摘要、测试源码/制品摘要、日志、`landscape-draft.xcresult` 和附件。测试后已安装主二进制/debug dylib 均匹配指定构建。复现选择 `RhineExampleUITests/GalleryInteractionTests/testLargestTextLandscapeDraftContinueAndDiscard`，关闭并行；结果包保留方法见样例 README。
 
 收尾恢复原 Dark / Large / Increased、两项减少偏好 On、竖屏 Gallery，截图确认。仍缺最低 iOS/iPadOS 17.0（本轮 runtime 清单仍只有27.0/27.1）、真机 VoiceOver/触控、最窄窗口尺寸确认及其他未覆盖的布局/外观/状态组合。没有新发现需要修改产品源码的故障；#35/#36 保持 OPEN，PR #1/#2 保持 Draft，未合并、关闭、发布或升级消费产品。
+
+
+## Agent 会话组合 #109 · 2026-10-30
+
+本项为 [#109](https://github.com/linhay/rhine-design/issues/109) 的 UIKit 组合规范及合成配方，见 [Draft PR #4](https://github.com/linhay/rhine-design-ios/pull/4) 与 [AgentSession](AgentSession.md)。基于远端 gallery `c62d920`，依赖 PR #2/#1；没有带入共享检出的 `ead93f3` / `2797159` 文档提交，没有改变公共 Package API、发布版本或消费项目。
+
+实现修订 `cf2c7f9`；输入法门禁刷新及严格键盘回归为 `3fb9e31`。固定 Xcode 27.1（27A9275）、Swift 6 模式，iOS/iPadOS Simulator 27.0（24A434），只使用合成数据。测试按单台任务模拟器串行执行，切换前关闭上一台，其他项目设备未操作。原始源码/工程摘要、主二进制与 debug dylib、测试二进制、日志、结果包与附件位于忽略的 `.local/agent-session-109/`。
+
+| 实际检查 | 结果与边界 |
+| --- | --- |
+| 初次 build/run 与定向 test_sim，SE 第3代 | PASS：UIKit 构建/安装/启动；8 项模型 + 1 项流式锚点 UI 通过。随后发送未知和初版键盘 2 项断言通过；工具临时结果包被清理，摘要单独保留，不冒称完整包存在。 |
+| `cf2c7f9` / SE / phone-fixed | 14/0/0，完整 xcresult：8 模型回归；授权后台恢复/允许/拒绝、遮挡/撤回、运行停止、流式锚点及未知发送行为通过。初版最大字号键盘用例断言不足，见下方失败保留，不据此声称真实发送或完整视觉通过。 |
+| 严格键盘首次复验 | FAIL：第一次 Done 后等待键盘消失超时；本环境中键盘仍存在。保留测试 stdout 与来源，测试已经失败后仅终止本任务诊断收集子进程，工具最终返回 1 FAIL。它不是整个产品的键盘故障结论。 |
+| `3fb9e31` / SE / phone-motion-fixed | PASS：3/0/0，完整 xcresult。实际读回 Reduce Motion 开启，普通浅色与深色最大辅助字号；授权 Home/Activate→同页同步→允许/拒绝、未知发送→重连→接受及迟到确认、严格键盘发送均通过。窗口读回 375×667pt。 |
+| 同一制品 / SE / phone-standard-fixed | PASS：1/0/0，完整 xcresult。恢复系统 Reduce Motion 关闭后，严格最大字号深色键盘发送通过；实际偏好读回与点击前按钮全文/键盘截图分别保留。 |
+| `3fb9e31` / iPad A16 / ipad-fixed | 5 PASS / 1 FAIL，完整 xcresult。Dark / 系统 Reduce Motion On，窗口实际 820×1180pt；授权确认/遮挡/撤回、后台运行、严格最大字号键盘和未知发送通过；原历史锚点测试失败，诊断见下节。 |
+
+### 键盘结果与证据修正
+
+初次最大字号截图中的 q 仍处于中文输入法组合，发送禁用且按钮文字部分被键盘裁切。旧用例只检查 isHittable，未断言 enabled 或点击后的“等待接受”，所以旧绿灯不能证明真实发送。另一个点击后截图存在文字未完整绘制的现象，成因未确认，不计完整视觉通过；原件保留。
+
+新用例先用原生 Done 确认组合文本；若键盘保留则继续，若收起则重新显示。分别检查可用性、发送按钮完整 frame 位于 composer/实际键盘边界内、字母键仍可命中，并且点击后必须进入“等待接受”、草稿保留、发送禁用。最终点击前截图实看确认完整按钮文字与键盘同时可见。样例在 editingDidEnd 刷新最终文本及门禁；结束输入不自动提交。
+
+### iPad 历史阅读前提修正
+
+原用例在两次下滑后把首条正文位置作为历史锚点，但 iPad 的 720pt 宽内容在初始视口中几乎完整可见。临时诊断构建的固定复跑再次失败，并记录 contentSize 855→877→899→921pt、viewport 868.5pt；进入所谓“历史”状态时实际距底仅 8.5pt，仍在 24pt 跟随区且 followsBottom=true。追加后偏移52.5pt与新的底部距离一致，证明本次是测试未建立历史阅读前提，不是已确认的模态或滚动算法缺陷。
+
+旧 iPad 5/1 与独立诊断失败包、几何附件和临时源码差异均保留；诊断 test_sim 的调用收尾没有取得可引用摘要，后续固定制品诊断单独记证。修正用 18 条合成历史，并在测锚点之前断言末条正文位于视口底部24pt以外，容差仍为2pt。默认6条配方和滚动算法未改变；临时滚动诊断已从交付源码移除。最终长历史候选为 `0526003`；iPad 定向 test_sim 1 PASS。固定制品 `ipad-history-final` 1/0/0，SE `phone-history-final` 9/0/0（8模型+1流式UI），均有完整xcresult、前后几何附件及截图；SE读回Reduce Motion关闭，iPad读回开启。两个设备安装后的主二进制与debug dylib均匹配冻结制品，临时诊断未进入交付。
+
+### 制品与未覆盖范围
+
+`3fb9e31` 已验收 App 主二进制 SHA-256 为 `a171cfff87597bad293cf0c0700e76c4c778a666709e4dc81c5ff84f7e18613e`，debug dylib 为 `f6cdf8a109381c5e754cf5a70c051b49f3e71345215ad2d3bbdcfb8a73ef6d1f`。SE 已安装的两者均匹配构建；这份 App 已归档于 artifacts-3fb9e31，完整源码/工程与测试二进制清单见本地 final-candidate-manifest。最终 `0526003` 的主二进制摘要相同，debug dylib 为 `4d2692cc4bc5a00dd6614d5e5c7ecae7c2bcfc9d770c05db5a51274d73c35249`；App 和测试制品另冻结于 artifacts-final，并由 delivery-candidate-manifest 绑定。test_sim 与固定制品 test-without-building 分开记录，不把同一场景的复跑算作新的覆盖。
+
+SKIPPED：最低 iOS/iPadOS 17.0（本轮运行时清单只有27.0/27.1）、真实 VoiceOver 阅读/激活/归焦与触控、iPad 最窄多任务窗口、实时字号变化及剩余横竖屏/外观组合。本轮只读设备清单有两台物理 iPhone 显示可用，但未核验本候选签名、安装、信任或人工验收；不沿用“所有物理设备不可用”的旧事实，也不把连接可见当通过。既有 Device Hub 最窄窗口拖拽失败、历史超时和 #35/#36 的未完成条件仍保留。
+
+N/A：真实协议、主机网络、持久化、多行输入、历史分页与并发授权队列；本项不提供这些实现。合成状态和消费者 loopback 证据不能互相补算。#109 保持 OPEN，PR #4 保持 Draft，依赖 PR #1/#2 也不因本项推进而合并或关闭；不发布、不升级消费产品。
