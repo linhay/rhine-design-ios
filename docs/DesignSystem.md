@@ -20,6 +20,12 @@ iOS 的规范、tokens、原生实现、样例、版本和验收独立于 Web/Re
 
 规范入口：`docs/DesignSystem.md`、`docs/Tokens.md`、`docs/Components.md`、`docs/Validation.md`；README 链接这些入口。本仓库规范与原 issue 共同保留决定依据；任务以原 issue 为权威入口。
 
+## 任务与复核
+
+设计任务先明确主要用途：操作界面保持动作、真实状态和恢复路径清楚；阅读界面保持内容与阅读位置连续；品牌表达只在需求开放时探索。先在原任务说明中列出必须可见的事实、必须完成的动作和失败/退出路径，再复用现有 UIKit 能力。评审先功能与恢复，后层级、冗余和连续性；不追加统一主题、外部字体、动画数量目标或第二套 tokens。
+
+上述是工作方法，不改变 D01–D09。原生动作、Dynamic Type、Auto Layout 与系统辅助功能按[验收计划](Validation.md#按变化优先验证)检查；Web 配方、CSS 数值与 DOM 检测结果均不能替代原生依据。
+
 ## 平台依据
 
 - [Apple Xcode 系统要求](https://developer.apple.com/xcode/system-requirements)：2026-10-26 核对，Xcode27.1条目列出iOS27.1 SDK、Swift6.4编译器、Swift6语言模式，设备/模拟器支持iOS17及以后；27.2标为RC。**选择27.1是本方案判断**，并非Apple要求所有库使用此版本。
