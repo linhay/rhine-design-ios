@@ -64,3 +64,5 @@ xcodebuild -project Examples/RhineExample.xcodeproj -scheme RhineExample \
 范围为有限消息、页面内草稿与单个活动请求，离开页面后的持久化和真实协议由宿主负责。`--agent-dark` / `--agent-large` 是本 App 的预览参数，实际环境文本读回 UIKit traits；它们不冒充系统偏好变化。真实后台通过 Home / Activate 验证，模拟重连按钮的检查另记。
 
 定向测试入口为 `RhineDesignTests/AgentSessionModelTests` 与 `RhineExampleUITests/AgentSessionInteractionTests`。工程通过公开 `RhineDesign` 产品消费；样例模型测试托管在 App 中，没有加入 Swift Package 的公共目标。原生结果与环境缺口见 [Validation](../docs/Validation.md)，包括最低 17.0、真实 VoiceOver/触控和 iPad 最窄窗口。
+
+使用 `--agent-long-history` 可显示 18 条合成正文，供较高的 iPad 视口测试历史阅读。锚点测试必须先断言末条内容已离开视口底部跟随区；仅执行两次下滑不证明已经脱离底部。默认仍显示 6 条正文。

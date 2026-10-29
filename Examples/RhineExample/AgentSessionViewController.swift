@@ -102,7 +102,8 @@ final class AgentSessionViewController: UIViewController, UIScrollViewDelegate, 
         facts.axis = .vertical; facts.spacing = RhineSpacing.inline
         environment.accessibilityIdentifier = "agent.environment"
         messages.addArrangedSubview(facts)
-        for index in 0..<6 {
+        let historyCount = ProcessInfo.processInfo.arguments.contains("--agent-long-history") ? 18 : 6
+        for index in 0..<historyCount {
             addMessage("示例正文 \(index + 1)", text: "这是一段可公开的合成阅读内容。阅读历史时，新的正文片段不会抢走当前位置。Long messages wrap naturally and keep their reading order.", id: "agent.message.\(index)")
         }
         addMessage("推理摘要 · 辅助内容", text: "先核对资料范围，再整理结果。此处仅演示公开合成摘要，不代表任何模型的内部推理。", secondary: true)

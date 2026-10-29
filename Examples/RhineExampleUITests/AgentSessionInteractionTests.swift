@@ -4,13 +4,14 @@ import UIKit
 /// Exercises the real UIKit recipe with synthetic host events, not a network service.
 @MainActor
 final class AgentSessionInteractionTests: XCTestCase {
-    private func launch(dark: Bool = false, large: Bool = false) -> XCUIApplication {
+    private func launch(dark: Bool = false, large: Bool = false, longHistory: Bool = false) -> XCUIApplication {
         continueAfterFailure = false
         let app = XCUIApplication()
         app.launchArguments = ["--agent-session", "-UIPreferredContentSizeCategoryName",
                                UIContentSizeCategory.large.rawValue]
         if dark { app.launchArguments.append("--agent-dark") }
         if large { app.launchArguments.append("--agent-large") }
+        if longHistory { app.launchArguments.append("--agent-long-history") }
         app.launch()
         XCTAssertTrue(app.scrollViews["agent.timeline"].waitForExistence(timeout: 30))
         let actual = app.staticTexts["agent.environment"].label
@@ -120,7 +121,7 @@ final class AgentSessionInteractionTests: XCTestCase {
     }
 
     func testStreamingFollowsBottomAndPreservesHistoricalReadingPosition() {
-        let app = launch()
+        let app = launch(longHistory: true)
         let timeline = app.scrollViews["agent.timeline"]
         let stream = app.staticTexts["agent.stream"]
         let original = stream.label
@@ -131,6 +132,8 @@ final class AgentSessionInteractionTests: XCTestCase {
 
         timeline.swipeDown(velocity: .slow)
         timeline.swipeDown(velocity: .slow)
+        XCTAssertGreaterThan(stream.frame.maxY, timeline.frame.maxY + 24,
+                             "History assertions require the reader to have actually left the bottom follow region")
         let candidates = app.staticTexts.matching(NSPredicate(format: "identifier BEGINSWITH %@", "agent.message."))
         let anchor = candidates.allElementsBoundByIndex.first {
             $0.isHittable && $0.frame.minY >= timeline.frame.minY &&
@@ -139,9 +142,19 @@ final class AgentSessionInteractionTests: XCTestCase {
         XCTAssertNotNil(anchor, "A visible historical message is required for this test")
         guard let anchor else { return }
         let relativeY = anchor.frame.minY - timeline.frame.minY
+        func recordPosition(_ name: String) {
+            let evidence = XCTAttachment(string: "Anchor: \(anchor.identifier) \(anchor.frame)\nViewport: \(timeline.frame)\nStream: \(stream.frame)")
+            evidence.name = name
+            evidence.lifetime = .keepAlways
+            add(evidence)
+            capture(name, app: app)
+        }
+        recordPosition("history-before-stream")
         let historyStream = stream.label
         demo("stream", in: app)
+        recordPosition("history-after-first-stream")
         demo("stream", in: app)
+        recordPosition("history-after-second-stream")
         XCTAssertNotEqual(stream.label, historyStream)
         XCTAssertEqual(anchor.frame.minY - timeline.frame.minY, relativeY, accuracy: 2,
                        "Streaming below history must preserve the actual reading anchor")
