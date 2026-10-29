@@ -118,3 +118,9 @@ python3 Examples/Scripts/verify-agent-live-sizing.py \
 ```
 
 测试附件包含 App 与 display 截图、实际环境及控件几何；失败和超时保留原记录，不由后续重跑覆盖。横屏启动时已处于系统最大字号，只证明该次横屏环境；运行中字号往返另由 live-size 用例证明。可支持的结论、实际结果及剩余缺口统一见 [Validation](../docs/Validation.md)。
+
+紧凑导航的定向检查同样使用上面的真实系统最大字号环境，在小 iPhone 上从正常 Gallery 推入 Agent 配方，不使用没有返回入口的 `--agent-session` 根页面。可将 `-only-testing` 分别设为以下路径；iPad不进入相同的紧凑导航前提，这三个手机用例在iPad明确skip，不计通过：
+
+- `RhineExampleUITests/AgentSessionLandscapeTests/testCompactDoneRestoresNavigationAndDraft`：实际原生Done收键盘，保留页面内草稿且不发送，恢复导航并返回Gallery。
+- `RhineExampleUITests/AgentSessionLandscapeTests/testCompactRotationRestoresNavigationAndDraft`：保持键盘旋转到充足高度，恢复导航并保留草稿，随后Done与实际返回。
+- `RhineExampleUITests/AgentSessionLandscapeTests/testCompactExitAndNewRecipeRestoreNavigation`：紧凑态用查看最新恢复阅读，再点原生返回并重新进入，确认Gallery导航与新配方正常；跨实例草稿持久化不属于合成页面。

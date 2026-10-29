@@ -249,4 +249,148 @@ final class AgentSessionLandscapeTests: XCTestCase {
             capture("landscape-authorization-\(decision)-confirmed", app: app)
         }
     }
+
+    private func launchCompactRecipeFromGallery() throws -> XCUIApplication {
+        continueAfterFailure = false
+        executionTimeAllowance = 180
+        guard UIDevice.current.userInterfaceIdiom == .phone else {
+            throw XCTSkip("Compact navigation cases target the phone's short landscape keyboard viewport")
+        }
+        XCUIDevice.shared.orientation = .portrait
+        let app = XCUIApplication()
+        // Normal navigation entry: the standalone --agent-session root has no Back.
+        if ProcessInfo.processInfo.environment["RHINE_AGENT_EXPECT_SIZE"] == nil {
+            app.launchArguments = ["--agent-large"]
+        }
+        app.launch()
+        XCTAssertTrue(app.scrollViews["gallery.scroll"].waitForExistence(timeout: 30))
+        openRecipeFromGallery(app)
+        waitForText("最大辅助字号", in: app.staticTexts["agent.environment"])
+        XCUIDevice.shared.orientation = .landscapeLeft
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(
+            predicate: NSPredicate { _, _ in
+                app.windows.firstMatch.frame.width > app.windows.firstMatch.frame.height
+            }, object: app)], timeout: 10), .completed)
+        let field = app.textFields["agent.draft"]
+        reachFully(field, in: app.scrollViews["agent.composer"], app: app)
+        field.tap()
+        let letter = app.keyboards.keys["q"].firstMatch
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(
+            predicate: NSPredicate(format: "exists == true AND hittable == true"), object: letter)], timeout: 5), .completed)
+        // Enter through the visible software keyboard, then commit the IME.
+        // typeText can leave this simulator's keyboard offscreen while the
+        // text field still owns focus, which is not a compact-editing premise.
+        letter.tap()
+        let done = app.keyboards.descendants(matching: .any).matching(NSPredicate(
+            format: "identifier IN %@ OR label IN %@", ["Done", "完成"], ["Done", "完成"])).firstMatch
+        XCTAssertTrue(done.waitForExistence(timeout: 5))
+        done.tap()
+        if !letter.isHittable { field.tap() }
+        let composer = app.scrollViews["agent.composer"]
+        let compact = XCTWaiter.wait(for: [XCTNSPredicateExpectation(
+            predicate: NSPredicate { _, _ in
+                letter.isHittable && abs(composer.frame.minY - app.windows.firstMatch.frame.minY) <= 1 &&
+                composer.frame.height > 0 && composer.frame.height < 200
+            }, object: app)], timeout: 5)
+        print("RHINE_NAV_START window=\(app.windows.firstMatch.frame) composer=\(composer.frame) field=\(field.frame)")
+        capture("navigation-compact-start", app: app,
+                elements: [composer, field, letter, app.buttons["agent.demo"]], includeHierarchy: true)
+        XCTAssertEqual(compact, .completed, "Require the visible software keyboard and actual compact viewport")
+        XCTAssertLessThan(app.windows.firstMatch.frame.height, 450)
+        XCTAssertEqual(field.value as? String, "q")
+        return app
+    }
+
+    private func openRecipeFromGallery(_ app: XCUIApplication) {
+        let entry = app.buttons["Agent 会话 · 合成配方"]
+        reachFully(entry, in: app.scrollViews["gallery.scroll"].firstMatch, app: app)
+        entry.tap()
+        XCTAssertTrue(app.scrollViews["agent.timeline"].waitForExistence(timeout: 5))
+        assertRecipeNavigation(app)
+    }
+
+    private func assertRecipeNavigation(_ app: XCUIApplication,
+                                        file: StaticString = #filePath, line: UInt = #line) {
+        let demo = app.buttons["agent.demo"]
+        let back = app.navigationBars.buttons["总览"]
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(
+            predicate: NSPredicate(format: "exists == true AND hittable == true"), object: demo)], timeout: 5), .completed,
+                       file: file, line: line)
+        XCTAssertTrue(back.isHittable, "The original Gallery Back action must return", file: file, line: line)
+        XCTAssertTrue(isFullyVisible(back.frame, in: app.windows.firstMatch.frame), file: file, line: line)
+    }
+
+    private func finishNativeEditing(_ app: XCUIApplication) {
+        let key = app.keyboards.descendants(matching: .any).matching(NSPredicate(
+            format: "identifier IN %@ OR label IN %@", ["Done", "完成"], ["Done", "完成"])).firstMatch
+        // With a Chinese IME, the first Done can commit composition; the next
+        // actual native Done ends editing. No programmatic resign or send tap.
+        for _ in 0..<2 {
+            if !app.keyboards.firstMatch.exists { break }
+            XCTAssertTrue(key.waitForExistence(timeout: 5))
+            key.tap()
+        }
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(
+            predicate: NSPredicate { _, _ in !app.keyboards.firstMatch.exists }, object: app)], timeout: 5), .completed)
+    }
+
+    func testCompactDoneRestoresNavigationAndDraft() throws {
+        defer { XCUIApplication().terminate(); XCUIDevice.shared.orientation = .portrait }
+        let app = try launchCompactRecipeFromGallery()
+        finishNativeEditing(app)
+        assertRecipeNavigation(app)
+        XCTAssertEqual(app.textFields["agent.draft"].value as? String, "q")
+        waitForText("未发送", in: app.staticTexts["agent.sendStatus"])
+        capture("navigation-done-restored", app: app, elements: [app.textFields["agent.draft"]], includeHierarchy: true)
+        app.navigationBars.buttons["总览"].tap()
+        XCTAssertTrue(app.scrollViews["gallery.scroll"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.navigationBars["总览"].exists)
+    }
+
+    func testCompactRotationRestoresNavigationAndDraft() throws {
+        defer { XCUIApplication().terminate(); XCUIDevice.shared.orientation = .portrait }
+        let app = try launchCompactRecipeFromGallery()
+        XCUIDevice.shared.orientation = .portrait
+        capture("navigation-after-rotation", app: app, elements: [app.textFields["agent.draft"]])
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(
+            predicate: NSPredicate { _, _ in
+                app.windows.firstMatch.frame.height > app.windows.firstMatch.frame.width
+            }, object: app)], timeout: 10), .completed)
+        assertRecipeNavigation(app)
+        XCTAssertEqual(app.textFields["agent.draft"].value as? String, "q")
+        XCTAssertTrue(app.keyboards.keys["q"].firstMatch.isHittable)
+        waitForText("未发送", in: app.staticTexts["agent.sendStatus"])
+        capture("navigation-rotation-restored", app: app, elements: [app.textFields["agent.draft"]], includeHierarchy: true)
+        finishNativeEditing(app)
+        app.navigationBars.buttons["总览"].tap()
+        XCTAssertTrue(app.scrollViews["gallery.scroll"].waitForExistence(timeout: 5))
+    }
+
+    func testCompactExitAndNewRecipeRestoreNavigation() throws {
+        defer { XCUIApplication().terminate(); XCUIDevice.shared.orientation = .portrait }
+        let app = try launchCompactRecipeFromGallery()
+        // Use the recipe's visible exit route. A hidden navigation bar does not
+        // promise an edge-pop gesture; latest restores reading and native Back.
+        let latest = app.buttons["agent.latest"]
+        reachFully(latest, in: app.scrollViews["agent.composer"], app: app)
+        latest.tap()
+        assertRecipeNavigation(app)
+        XCTAssertEqual(app.textFields["agent.draft"].value as? String, "q")
+        waitForText("未发送", in: app.staticTexts["agent.sendStatus"])
+        capture("navigation-before-native-back", app: app, elements: [app.textFields["agent.draft"]])
+        app.navigationBars.buttons["总览"].tap()
+        XCTAssertTrue(app.scrollViews["gallery.scroll"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.navigationBars["总览"].exists)
+        XCTAssertTrue(app.buttons["预览"].isHittable)
+        capture("navigation-compact-exit-gallery", app: app, includeHierarchy: true)
+        XCUIDevice.shared.orientation = .portrait
+        openRecipeFromGallery(app)
+        // A popped recipe is destroyed. A new recipe deliberately owns a new
+        // synthetic model; persistence across instances is the consumer's policy.
+        XCTAssertNotEqual(app.textFields["agent.draft"].value as? String, "q")
+        waitForText("未发送", in: app.staticTexts["agent.sendStatus"])
+        capture("navigation-new-recipe", app: app, elements: [app.textFields["agent.draft"]], includeHierarchy: true)
+        app.navigationBars.buttons["总览"].tap()
+        XCTAssertTrue(app.scrollViews["gallery.scroll"].waitForExistence(timeout: 5))
+    }
 }
