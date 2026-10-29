@@ -1,5 +1,7 @@
 # 独立 iOS 设计规范
 
+检索颜色、组件、样例与证据时，先读[UIKit 设计体系导航](README.md)。本页维护平台决定；数值、API 与运行结果分别在 Tokens、Components 和 Validation 中维护。
+
 > 当前主框架为 **UIKit**，依据[用户明确纠正](https://github.com/linhay/rhine-design/issues/34#issuecomment-6419860390)（2026-10-26）。此前 SwiftUI 主方案及其控件映射已被取代；SwiftUI 只可作为未来另行评估的可选消费适配，不是首批依赖。
 
 确认依据：[方案 v1](https://github.com/linhay/rhine-design/issues/34#issuecomment-6410947901) 与 [维护者确认](https://github.com/linhay/rhine-design/issues/34#issuecomment-6410983498)，2026-10-26。设计规则已确认；实现和运行验收状态另见 [Validation](Validation.md)。

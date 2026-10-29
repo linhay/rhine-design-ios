@@ -18,6 +18,7 @@
 
 ## 规范
 
+- [UIKit 设计体系导航](docs/README.md)：平台决定、变量、组件、样例与验证的工作入口。
 - [设计规范与平台决定](docs/DesignSystem.md)
 - [独立语义 tokens](docs/Tokens.md)
 - [首批组件契约](docs/Components.md)
