@@ -51,3 +51,16 @@ xcodebuild -project Examples/RhineExample.xcodeproj -scheme RhineExample \
 有效预期分别为 `Light/Dark`、`Standard/Increased`、`Off/On`、`Off/On`。测试只读真实系统值，不配置偏好或覆盖 traits。启动读回不替代运行中通知响应；测试后还原为运行前的系统设置。
 
 原始 xcresult、日志和截图放在被忽略的 `.local/`；不上传本机路径和设备标识。界面预览、测试断言、视觉审阅和真实辅助技术证据分别记录。
+
+
+## Agent 会话合成配方
+
+总览 → **Agent 会话 · 合成配方**，或用 `--agent-session` 启动独立入口。规范见 [AgentSession](../docs/AgentSession.md)。所有正文、工具结果、连接和授权均为合成数据，没有网络请求、真实文件访问或系统权限请求。
+
+页面上方保留连接、运行、发送与授权事实；底部是单行草稿。大字号与键盘共同占用空间时，输入区域自身可滚动，Done 只收键盘，“发送”才锁定本次草稿。输入区域滚动不会主动收键盘；阅读区域可交互收起。
+
+右上角“演示”可手动追加片段、断线/重连、确认发送接受/拒绝、开始/停止运行以及注入授权。授权页需选择后再“模拟宿主确认”；“模拟请求撤回”代表外部失效。授权期间后台回来后可在同一弹窗“模拟连接同步完成”，无需撤回有效请求。“其他弹窗遮挡”可在弹窗内收到或撤回请求，再关闭观察恢复。关闭弹窗不是授权决策。
+
+范围为有限消息、页面内草稿与单个活动请求，离开页面后的持久化和真实协议由宿主负责。`--agent-dark` / `--agent-large` 是本 App 的预览参数，实际环境文本读回 UIKit traits；它们不冒充系统偏好变化。真实后台通过 Home / Activate 验证，模拟重连按钮的检查另记。
+
+定向测试入口为 `RhineDesignTests/AgentSessionModelTests` 与 `RhineExampleUITests/AgentSessionInteractionTests`。工程通过公开 `RhineDesign` 产品消费；样例模型测试托管在 App 中，没有加入 Swift Package 的公共目标。原生结果与环境缺口见 [Validation](../docs/Validation.md)，包括最低 17.0、真实 VoiceOver/触控和 iPad 最窄窗口。

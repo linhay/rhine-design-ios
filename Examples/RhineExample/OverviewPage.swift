@@ -9,6 +9,11 @@ final class OverviewPage: GalleryPage {
         for (text, symbol, index) in [("按钮 · 层级与反馈", "hand.tap", 1), ("表单 · 输入与草稿", "square.and.pencil", 2), ("状态 · 空内容与恢复", "tray", 3)] {
             welcome.addArrangedSubview(RhineButton(text, symbol: symbol, style: .secondary) { [weak self] in self?.tabBarController?.selectedIndex = index })
         }
+        welcome.addArrangedSubview(RhineButton("Agent 会话 · 合成配方", symbol: "text.bubble", style: .secondary) { [weak self] in
+            let page = AgentSessionViewController()
+            page.hidesBottomBarWhenPushed = true
+            self?.navigationController?.pushViewController(page, animated: true)
+        })
         let typography = card("文字", detail: "系统字体随 Dynamic Type 调整。长文自然换行，不压缩字号。")
         typography.addArrangedSubview(galleryLabel("把重要的事，说清楚。", style: .title1))
         typography.addArrangedSubview(galleryLabel("标题 · 清晰的阅读层级", style: .headline))
