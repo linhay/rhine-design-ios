@@ -55,4 +55,76 @@ xcodebuild -project Examples/RhineExample.xcodeproj -scheme RhineExample \
 原始 xcresult、日志和截图放在被忽略的 `.local/`；不上传本机路径和设备标识。界面预览、测试断言、视觉审阅和真实辅助技术证据分别记录。
 
 
+## Agent 会话合成配方
+
+总览 → **Agent 会话 · 合成配方**，或用 `--agent-session` 启动独立入口。规范见 [AgentSession](../docs/AgentSession.md)。所有正文、工具结果、连接和授权均为合成数据，没有网络请求、真实文件访问或系统权限请求。
+
+页面上方保留连接、运行、发送与授权事实；底部是单行草稿。大字号与键盘共同占用空间时，输入区域自身可滚动，Done 只确认组合文本或收键盘，不提交，“发送”才锁定本次草稿。输入区域滚动不会主动收键盘；阅读区域可交互收起。
+
+右上角“演示”可手动追加片段、断线/重连、确认发送接受/拒绝、开始/停止运行以及注入授权。授权页需选择后再“模拟宿主确认”；“模拟请求撤回”代表外部失效。授权期间后台回来后可在同一弹窗“模拟连接同步完成”，无需撤回有效请求。“其他弹窗遮挡”可在弹窗内收到或撤回请求，再关闭观察恢复。关闭弹窗不是授权决策。
+
+范围为有限消息、页面内草稿与单个活动请求，离开页面后的持久化和真实协议由宿主负责。`--agent-dark` / `--agent-large` 是本 App 的预览参数，实际环境文本读回 UIKit traits；它们不冒充系统偏好变化。真实后台通过 Home / Activate 验证，模拟重连按钮的检查另记。
+
+定向测试入口为 `RhineDesignTests/AgentSessionModelTests`、`RhineExampleUITests/AgentSessionInteractionTests`、`RhineExampleUITests/AgentSessionLiveSizingTests` 与 `RhineExampleUITests/AgentSessionLandscapeTests`。工程通过公开 `RhineDesign` 产品消费；样例模型测试托管在 App 中，没有加入 Swift Package 的公共目标。原生结果与环境缺口见 [Validation](../docs/Validation.md)，包括最低 17.0、真实 VoiceOver/触控和 iPad 最窄窗口。以下命令说明复现方法，不代表这些环境已经通过。
+
+使用 `--agent-long-history` 可显示 18 条合成正文，供较高的 iPad 视口测试历史阅读。锚点测试必须先断言末条内容已离开视口底部跟随区；仅执行两次下滑不证明已经脱离底部。默认仍显示 6 条正文。
+
+复现前设置 `SIMULATOR_ID`（已启动的任务模拟器）、`DERIVED_DATA`（本轮构建目录）与 `OUTPUT_DIR`（新的证据目录），在 iOS 源码仓根执行。先构建一次，后续定向运行复用同一测试制品：
+
+```sh
+xcodebuild -project Examples/RhineExample.xcodeproj -scheme RhineExample \
+  -destination "platform=iOS Simulator,id=$SIMULATOR_ID" \
+  -derivedDataPath "$DERIVED_DATA" \
+  -parallel-testing-enabled NO build-for-testing
+```
+
+运行中的系统字号验收由宿主驱动 `simctl ui … content_size`，在每个用例的同一 App PID 内执行 Large → 最大辅助字号 → Large；reading 用例分别检查底部跟随与已离开底部的历史锚点，draft 用例检查已提交草稿、真实光标选区、软件键盘及完整发送按钮。测试读取实际字体度量、锚点和选区，完整按钮 frame 必须位于 composer 与窗口交集内、且在键盘上方。`--agent-inspection` 仅开启读取当前 UIKit 状态的 accessibility getter 测试探针，不设置选区、字号或布局。
+
+```sh
+python3 Examples/Scripts/verify-agent-live-sizing.py \
+  --device "$SIMULATOR_ID" \
+  --derived-data "$DERIVED_DATA" \
+  --output "$OUTPUT_DIR/live-size" \
+  --test both
+```
+
+`--test reading` / `--test draft` 可单独复现。驱动核验每次切换前后的真实系统 `content_size` 读回、同一用例的非空一致 PID，以及 xcresult 中指定测试全部执行并通过；跳过、缺失切换或恢复失败均不能算成功。运行结束尝试恢复原字号，并保留恢复读回、系统切换记录、日志、xcresult 与测试结果 JSON。`--agent-large`、启动字号参数或 trait override 不能作为运行中系统字号变化的证据。
+
+最大辅助字号横屏验收先从外部设置并读回系统字号，再用测试运行器环境传入预期。`TEST_RUNNER_RHINE_AGENT_EXPECT_SIZE` 会在测试内映射为 `RHINE_AGENT_EXPECT_SIZE`，禁用默认的 `--agent-large` 预览参数。测试真实设置 `landscapeLeft` 并断言窗口宽大于高；验证真实键盘字母键可命中、授权上下文可滚至末尾。发送、允许/拒绝及确认按钮的完整 frame 必须位于实际可见视口内，不以部分可命中代替。
+
+```sh
+(
+  set -eu
+  mkdir -p "$OUTPUT_DIR/landscape"
+  original_content_size="$(xcrun simctl ui "$SIMULATOR_ID" content_size)"
+  trap 'xcrun simctl ui "$SIMULATOR_ID" content_size "$original_content_size"
+    restored_content_size="$(xcrun simctl ui "$SIMULATOR_ID" content_size)"
+    printf "%s\n" "$restored_content_size" > "$OUTPUT_DIR/landscape/restored-content-size.txt"
+    test "$restored_content_size" = "$original_content_size"' EXIT
+  xcrun simctl ui "$SIMULATOR_ID" content_size accessibility-extra-extra-extra-large
+  actual_content_size="$(xcrun simctl ui "$SIMULATOR_ID" content_size)"
+  printf '%s\n' "$actual_content_size" > "$OUTPUT_DIR/landscape/content-size.txt"
+  test "$actual_content_size" = accessibility-extra-extra-extra-large
+  TEST_RUNNER_RHINE_AGENT_EXPECT_SIZE=最大辅助字号 \
+  xcodebuild -project Examples/RhineExample.xcodeproj -scheme RhineExample \
+    -destination "platform=iOS Simulator,id=$SIMULATOR_ID" \
+    -derivedDataPath "$DERIVED_DATA" \
+    -parallel-testing-enabled NO -collect-test-diagnostics never \
+    -test-timeouts-enabled YES \
+    -default-test-execution-time-allowance 180 \
+    -maximum-test-execution-time-allowance 180 \
+    -resultBundlePath "$OUTPUT_DIR/landscape/result.xcresult" \
+    -only-testing:RhineExampleUITests/AgentSessionLandscapeTests \
+    test-without-building > "$OUTPUT_DIR/landscape/test.log" 2>&1
+)
+```
+
+测试附件包含 App 与 display 截图、实际环境及控件几何；失败和超时保留原记录，不由后续重跑覆盖。横屏启动时已处于系统最大字号，只证明该次横屏环境；运行中字号往返另由 live-size 用例证明。可支持的结论、实际结果及剩余缺口统一见 [Validation](../docs/Validation.md)。
+
+紧凑导航的定向检查同样使用上面的真实系统最大字号环境，在小 iPhone 上从正常 Gallery 推入 Agent 配方，不使用没有返回入口的 `--agent-session` 根页面。可将 `-only-testing` 分别设为以下路径；iPad不进入相同的紧凑导航前提，这三个手机用例在iPad明确skip，不计通过：
+
+- `RhineExampleUITests/AgentSessionLandscapeTests/testCompactDoneRestoresNavigationAndDraft`：实际原生Done收键盘，保留页面内草稿且不发送，恢复导航并返回Gallery。
+- `RhineExampleUITests/AgentSessionLandscapeTests/testCompactRotationRestoresNavigationAndDraft`：保持键盘旋转到充足高度，恢复导航并保留草稿，随后Done与实际返回。
+- `RhineExampleUITests/AgentSessionLandscapeTests/testCompactExitAndNewRecipeRestoreNavigation`：紧凑态用查看最新恢复阅读，再点原生返回并重新进入，确认Gallery导航与新配方正常；跨实例草稿持久化不属于合成页面。
+
 `GalleryMinimumWindowTests` 是改变真实系统窗口的可选测试，仅在独占的 iPad 模拟器上设置测试运行器环境 `RHINE_WINDOW_RESIZE=1` 后执行。先将系统设为最大辅助字号、Dark / Increased Contrast、两项减少偏好 On；测试读回真实值，不使用启动字号覆盖。两次向内拖动系统手柄并核对尺寸下界，再分段检查长错误末尾、保存失败保留字段与重试成功。单用例有界 360 秒；原始超时和不同修订的结果分别保留。未提供前提时 SKIPPED，不算通过。
