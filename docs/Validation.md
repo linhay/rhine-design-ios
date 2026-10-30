@@ -229,3 +229,21 @@ iPad 单独键盘复核在加入最多 5 秒等待后发现 Keyboard 元素，�
 本地证据在忽略的 `.local/ipad-boundaries-20261028/`：手动步骤、竖横屏长错误截图、源码及主二进制/debug dylib 摘要、测试源码/制品摘要、日志、`landscape-draft.xcresult` 和附件。测试后已安装主二进制/debug dylib 均匹配指定构建。复现选择 `RhineExampleUITests/GalleryInteractionTests/testLargestTextLandscapeDraftContinueAndDiscard`，关闭并行；结果包保留方法见样例 README。
 
 收尾恢复原 Dark / Large / Increased、两项减少偏好 On、竖屏 Gallery，截图确认。仍缺最低 iOS/iPadOS 17.0（本轮 runtime 清单仍只有27.0/27.1）、真机 VoiceOver/触控、最窄窗口尺寸确认及其他未覆盖的布局/外观/状态组合。没有新发现需要修改产品源码的故障；#35/#36 保持 OPEN，PR #1/#2 保持 Draft，未合并、关闭、发布或升级消费产品。
+
+
+## Gallery 真实最窄 iPad 窗口 · 2026-10-30
+
+本节以 Gallery 自身制品补充 A01/F02，取代“没有可执行方法确认最窄窗口”的状态，不借用 #109 的通过结果。测试提交 `fbceea24d8af19fe272a3e752cc7e246e2da9b9f`，App/公共组件实现与 `c62d920` 相同；此前本地 `ead93f3` / `2797159` 仅整理文档，已另行核对。Xcode27.1 / iPad A16 Simulator27.0，Dark / Increased、Reduce Motion与Reduce Transparency On、系统 Accessibility XXXL，由基础环境页实际读回；Gallery 无启动字号覆盖。
+
+XCTest通过SpringBoard屏幕坐标拖动真实右下角手柄，两次向内拖动均确认窗口375×486pt，不用320pt内容预览代替。普通表单页实际阅读区375×350pt，编辑模态阅读区375×358pt。只启动一台任务iPad，结束恢复系统Large并关闭，其他项目设备未操作。
+
+| 场景 | 结果与证据范围 |
+| --- | --- |
+| 最大字号长错误 | **PASS（有界）**：303×417pt错误文本分段至“窄窗口下也应完整换行。”末句；保留起点、6段重叠截图、末尾及几何，实看中段与末句。读取文本不查询不相关激活点；离屏子元素按实际窗口原点归一。 |
+| 保存失败与重试 | **PASS（有界）**：完整模拟失败按钮可命中；失败提示全文可读，名称/邮箱仍为所填合成值，保存恢复可用；完整成功按钮可命中，重试成功后模态关闭、摘要包含已保存邮箱。保存中保存/取消禁用。该路径未新增键盘输入，不外推 Next/Done 或改动后任意草稿回滚。 |
+
+首包 `first.xcresult` 为 **1 PASS / 1 FAIL / 0 SKIPPED，exit65**：保存流程通过，长错误在分段取证时超出240秒；原包及测试源码保留。测试步骤完成后的额外 `simctl diagnose` 收集超过3分钟，明确识别为本次构建所属子进程后仅向该进程发送SIGTERM；最终xcresult可读并成功导出附件，不能宣称额外诊断收集完整。后续仅把单用例上限改为360秒，单独执行长错误，`reading.xcresult` 为 **1 PASS / 0 FAIL / 0 SKIPPED，exit0**，实际186.420秒。成功复跑不解释首次耗时或辅助树错误的根因，不将两包写成一次全绿套件。
+
+本轮两包主程序SHA-256相同：`fd28cb5bb7bdf0d7fe77efb71e97a8fe3427db3bbd5b1b196f23b8d45dd56cb6`；debug dylib：`adf00b98ef1494b3254d381121ca4359986884adce1f79f809beed78b0e0459a`，安装读回均匹配。首包测试二进制 `9e1443e42f0181dd66e524e0c2f533c89ff03edbc4b04fea3fa5e30a2de09484`；360秒上限修订 `73ed4f7d9b3c2006b6b5ec1abb34b55c7acbb3ec752cf550b0147254fb5e0117`。忽略目录 `.local/gallery-window-20261030/` 的 delivery-manifest 关联源码快照、制品摘要、安装核对、日志、结果及附件。
+
+本次补齐上述最窄窗口尺寸/长错误/保存恢复组合；不外推基础PR#1制品、软件键盘在所有窗口位置的遮挡、真实辅助技术或最低系统。最低17.0、真机VoiceOver/触控及其余尚无证据的明确场景仍保留；#35/#36与PR#1/#2保持OPEN / Draft，不合并、关闭、发布或升级消费方。
