@@ -124,3 +124,5 @@ python3 Examples/Scripts/verify-agent-live-sizing.py \
 - `RhineExampleUITests/AgentSessionLandscapeTests/testCompactDoneRestoresNavigationAndDraft`：实际原生Done收键盘，保留页面内草稿且不发送，恢复导航并返回Gallery。
 - `RhineExampleUITests/AgentSessionLandscapeTests/testCompactRotationRestoresNavigationAndDraft`：保持键盘旋转到充足高度，恢复导航并保留草稿，随后Done与实际返回。
 - `RhineExampleUITests/AgentSessionLandscapeTests/testCompactExitAndNewRecipeRestoreNavigation`：紧凑态用查看最新恢复阅读，再点原生返回并重新进入，确认Gallery导航与新配方正常；跨实例草稿持久化不属于合成页面。
+
+`GalleryMinimumWindowTests` 是改变真实系统窗口的可选测试，仅在独占的 iPad 模拟器上设置测试运行器环境 `RHINE_WINDOW_RESIZE=1` 后执行。先将系统设为最大辅助字号、Dark / Increased Contrast、两项减少偏好 On；测试读回真实值，不使用启动字号覆盖。两次向内拖动系统手柄并核对尺寸下界，再分段检查长错误末尾、保存失败保留字段与重试成功。单用例有界 360 秒；原始超时和不同修订的结果分别保留。未提供前提时 SKIPPED，不算通过。

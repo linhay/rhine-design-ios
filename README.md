@@ -20,6 +20,7 @@
 
 候选组合配方：从总览进入 **Agent 会话 · 合成配方**，体验正文/工具混排、流式阅读位置、未确认草稿与一次性授权。见 [组合契约](docs/AgentSession.md)；此入口没有真实网络或新增公开 API，依赖仍未发布的 gallery 候选。
 
+- [UIKit 设计体系导航](docs/README.md)：平台决定、变量、组件、样例与验证的工作入口。
 - [设计规范与平台决定](docs/DesignSystem.md)
 - [独立语义 tokens](docs/Tokens.md)
 - [首批组件契约](docs/Components.md)

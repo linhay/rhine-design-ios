@@ -324,3 +324,207 @@ final class GalleryInteractionTests: XCTestCase {
         capture("gallery-dark-320pt-largest-state")
     }
 }
+
+
+/// Opt-in tests mutate a reserved iPad's real system window, never a content preview.
+@MainActor
+final class GalleryMinimumWindowTests: XCTestCase {
+    private func launchMinimum() throws -> XCUIApplication {
+        guard ProcessInfo.processInfo.environment["RHINE_WINDOW_RESIZE"] == "1",
+              UIDevice.current.userInterfaceIdiom == .pad else {
+            throw XCTSkip("Requires a reserved iPad with system windowing enabled")
+        }
+        continueAfterFailure = false
+        executionTimeAllowance = 360
+        XCUIDevice.shared.orientation = .portrait
+        let app = XCUIApplication()
+        app.launchArguments = ["--foundation-diagnostics"]
+        app.launch()
+        let size = app.staticTexts["environment.Dynamic Type"]
+        XCTAssertTrue(size.waitForExistence(timeout: 20))
+        XCTAssertEqual(size.label, UIContentSizeCategory.accessibilityExtraExtraExtraLarge.rawValue)
+        XCTAssertEqual(app.staticTexts["environment.Appearance"].label, "Dark")
+        XCTAssertEqual(app.staticTexts["environment.Contrast"].label, "Increased")
+        XCTAssertEqual(app.staticTexts["environment.Reduce Motion"].label, "On")
+        XCTAssertEqual(app.staticTexts["environment.Reduce Transparency"].label, "On")
+        capture("minimum-system-readback", app: app, includeHierarchy: true)
+        app.terminate()
+        app.launchArguments = ["--gallery-tab=2"]
+        app.launch()
+        XCTAssertTrue(app.scrollViews["gallery.scroll"].waitForExistence(timeout: 20))
+        func shrink() {
+            let frame = app.windows.firstMatch.frame
+            screenPoint(frame.maxX - 10, frame.maxY - 10).press(forDuration: 0.5,
+                thenDragTo: screenPoint(frame.minX + 150, frame.minY + 260),
+                withVelocity: .slow, thenHoldForDuration: 0.5)
+        }
+        shrink()
+        let minimum = app.windows.firstMatch.frame
+        XCTAssertLessThanOrEqual(minimum.width, 400)
+        XCTAssertLessThanOrEqual(minimum.height, 500)
+        shrink()
+        let clamped = app.windows.firstMatch.frame
+        XCTAssertEqual(clamped.width, minimum.width, accuracy: 1)
+        XCTAssertEqual(clamped.height, minimum.height, accuracy: 1)
+        capture("minimum-window-clamped", app: app, includeHierarchy: true)
+        return app
+    }
+    private func screenPoint(_ x: CGFloat, _ y: CGFloat) -> XCUICoordinate {
+        XCUIApplication(bundleIdentifier: "com.apple.springboard")
+            .coordinate(withNormalizedOffset: .zero).withOffset(CGVector(dx: x, dy: y))
+    }
+
+    // Offscreen descendants in this system window may report window-local
+    // coordinates, while their scroll view reports screen coordinates. Normalize
+    // only that observed origin mismatch; visible controls stay in screen space.
+    private func windowRect(_ element: XCUIElement, app: XCUIApplication) -> CGRect {
+        let frame = element.frame
+        let window = app.windows.firstMatch.frame
+        if window.minX > 0 && frame.minX < window.minX - 1 {
+            return frame.offsetBy(dx: window.minX, dy: window.minY)
+        }
+        return frame
+    }
+
+    private func windowDrag(_ scroll: XCUIElement, app: XCUIApplication, upward: Bool, distance: CGFloat) {
+        let frame = usableViewport(scroll, app: app)
+        let travel = min(frame.height * 0.55, max(24, distance))
+        let y = frame.minY + frame.height * (upward ? 0.8 : 0.2)
+        // Keep both endpoints clear of the system window’s rounded corners.
+        screenPoint(frame.midX, y).press(forDuration: 0.01,
+            thenDragTo: screenPoint(frame.midX, y + (upward ? -travel : travel)),
+            withVelocity: .slow, thenHoldForDuration: 0.1)
+    }
+
+    private func windowReach(_ element: XCUIElement, in scroll: XCUIElement, app: XCUIApplication) {
+        XCTAssertTrue(element.waitForExistence(timeout: 5))
+        for _ in 0..<24 {
+            let viewport = usableViewport(scroll, app: app)
+            let rect = windowRect(element, app: app)
+            if element.isHittable && isFullyVisible(rect, in: viewport) { return }
+            XCTAssertLessThanOrEqual(rect.height, viewport.height + 1)
+            let upward = rect.maxY > viewport.maxY
+            windowDrag(scroll, app: app, upward: upward,
+                       distance: (upward ? rect.maxY - viewport.maxY : viewport.minY - rect.minY) + 16)
+        }
+        capture("minimum-window-unreachable", app: app, elements: [scroll, element], includeHierarchy: true)
+        XCTFail("Entire control must be visible and hittable within the actual window")
+    }
+
+    private func windowTap(_ element: XCUIElement, app: XCUIApplication) {
+        let rect = windowRect(element, app: app)
+        screenPoint(rect.midX, rect.midY).tap()
+    }
+
+    private func windowRead(_ element: XCUIElement, in scroll: XCUIElement, app: XCUIApplication, name: String) {
+        XCTAssertTrue(element.waitForExistence(timeout: 5))
+        for _ in 0..<64 {
+            let viewport = usableViewport(scroll, app: app)
+            let rect = windowRect(element, app: app)
+            if rect.minY >= viewport.minY - 1 && rect.minY < viewport.maxY - 50 { break }
+            let upward = rect.minY >= viewport.maxY - 50
+            windowDrag(scroll, app: app, upward: upward,
+                       distance: abs(rect.minY - viewport.minY) + 16)
+        }
+        let top = usableViewport(scroll, app: app)
+        let rect = windowRect(element, app: app)
+        capture(name + "-top-position", app: app, elements: [scroll, element], includeHittability: false)
+        XCTAssertGreaterThanOrEqual(rect.minY, top.minY - 1)
+        XCTAssertLessThan(rect.minY, top.maxY - 50)
+        XCTAssertGreaterThanOrEqual(rect.minX, top.minX - 1)
+        XCTAssertLessThanOrEqual(rect.maxX, top.maxX + 1)
+        capture(name + "-start", app: app, elements: [scroll, element], includeHittability: false)
+        for index in 0..<32 {
+            let viewport = usableViewport(scroll, app: app)
+            let current = windowRect(element, app: app)
+            if current.maxY <= viewport.maxY && current.maxY >= viewport.minY + 40 { break }
+            windowDrag(scroll, app: app, upward: current.maxY > viewport.maxY,
+                       distance: min(viewport.height * 0.45, abs(current.maxY - viewport.maxY) + 8))
+            capture(name + "-slice-\(index)", app: app, elements: [scroll, element], includeHittability: false)
+        }
+        let bottom = usableViewport(scroll, app: app)
+        XCTAssertLessThanOrEqual(windowRect(element, app: app).maxY, bottom.maxY)
+        XCTAssertGreaterThanOrEqual(windowRect(element, app: app).maxY, bottom.minY + 40)
+        capture(name + "-end", app: app, elements: [scroll, element], includeHittability: false)
+    }
+
+    private func capture(_ name: String, app: XCUIApplication, elements: [XCUIElement] = [],
+                         includeHierarchy: Bool = false, includeHittability: Bool = true) {
+        var details = ["Launch arguments: \(app.launchArguments)", "Window: \(app.windows.firstMatch.frame)"]
+        let environment = app.staticTexts["environment.Dynamic Type"]
+        details.append(environment.exists ? "Environment: \(environment.label)" : "Main environment hidden by current modal; see launch attachment")
+        if app.keyboards.firstMatch.exists { details.append("Keyboard: \(app.keyboards.firstMatch.frame)") }
+        details += elements.enumerated().map { index, element in
+            element.exists
+                ? "\(element.identifier): \(element.frame), hittable=\(includeHittability ? String(element.isHittable) : "not queried for reading-only content"), enabled=\(element.isEnabled)"
+                : "Element[\(index)] does not exist in the accessibility hierarchy"
+        }
+        let geometry = XCTAttachment(string: details.joined(separator: "\n"))
+        geometry.name = name + "-geometry"; geometry.lifetime = .keepAlways; add(geometry)
+        for (suffix, screenshot) in [("app", app.screenshot()), ("display", XCUIScreen.main.screenshot())] {
+            let attachment = XCTAttachment(screenshot: screenshot)
+            attachment.name = name + "-" + suffix; attachment.lifetime = .keepAlways; add(attachment)
+        }
+        if includeHierarchy {
+            let hierarchy = XCTAttachment(string: app.debugDescription)
+            hierarchy.name = name + "-hierarchy"; hierarchy.lifetime = .keepAlways; add(hierarchy)
+        }
+    }
+
+    private func usableViewport(_ scroll: XCUIElement, app: XCUIApplication) -> CGRect {
+        var frame = scroll.frame.intersection(app.windows.firstMatch.frame)
+        if app.keyboards.firstMatch.exists && app.keyboards.firstMatch.frame.height > 0 {
+            frame.size.height = max(0, min(frame.maxY, app.keyboards.firstMatch.frame.minY) - frame.minY)
+        }
+        return frame
+    }
+
+    private func isFullyVisible(_ target: CGRect, in viewport: CGRect) -> Bool {
+        target.width > 0 && target.height > 0 &&
+        target.minX >= viewport.minX - 1 && target.maxX <= viewport.maxX + 1 &&
+        target.minY >= viewport.minY - 1 && target.maxY <= viewport.maxY + 1
+    }
+
+
+    func testMinimumWindowLongErrorReading() throws {
+        let app = try launchMinimum()
+        let error = app.staticTexts.matching(NSPredicate(format: "label CONTAINS %@", "错误提示可以很长")).firstMatch
+        XCTAssertTrue(error.waitForExistence(timeout: 5))
+        XCTAssertTrue(error.label.hasSuffix("窄窗口下也应完整换行。"))
+        windowRead(error, in: app.scrollViews["gallery.scroll"].firstMatch, app: app, name: "minimum-gallery-long-error")
+    }
+
+    func testMinimumWindowSaveFailureRetentionAndRetry() throws {
+        let app = try launchMinimum()
+        let scroll = app.scrollViews["gallery.scroll"].firstMatch
+        let open = app.buttons["form.open"]
+        windowReach(open, in: scroll, app: app); windowTap(open, app: app)
+        let save = app.navigationBars.buttons["form.save"]
+        XCTAssertTrue(save.waitForExistence(timeout: 5))
+        let editor = app.scrollViews["gallery.scroll"].firstMatch
+        let fill = app.buttons["填入有效示例"]
+        windowReach(fill, in: editor, app: app); windowTap(fill, app: app)
+        XCTAssertTrue(save.isHittable)
+        XCTAssertTrue(isFullyVisible(windowRect(save, app: app), in: app.windows.firstMatch.frame))
+        save.tap()
+        XCTAssertFalse(save.isEnabled)
+        XCTAssertFalse(app.navigationBars.buttons["取消"].isEnabled)
+        let failure = app.buttons["模拟保存失败"]
+        windowReach(failure, in: editor, app: app)
+        capture("minimum-save-failure-action", app: app, elements: [editor, failure])
+        windowTap(failure, app: app)
+        XCTAssertTrue(app.staticTexts["form.feedback"].label.contains("草稿已保留"))
+        XCTAssertEqual(app.textFields["form.field.0"].value as? String, "示例访客")
+        XCTAssertEqual(app.textFields["form.field.1"].value as? String, "hello@example.com")
+        windowRead(app.staticTexts["form.feedback"], in: editor, app: app, name: "minimum-retained-feedback")
+        XCTAssertTrue(save.isEnabled)
+        save.tap()
+        let success = app.buttons["模拟保存成功"]
+        windowReach(success, in: editor, app: app)
+        capture("minimum-retry-success-action", app: app, elements: [editor, success])
+        windowTap(success, app: app)
+        XCTAssertTrue(open.waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["form.summary"].label.contains("hello@example.com"))
+        capture("minimum-retry-saved", app: app, includeHierarchy: true)
+    }
+}
