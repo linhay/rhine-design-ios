@@ -51,3 +51,6 @@ xcodebuild -project Examples/RhineExample.xcodeproj -scheme RhineExample \
 有效预期分别为 `Light/Dark`、`Standard/Increased`、`Off/On`、`Off/On`。测试只读真实系统值，不配置偏好或覆盖 traits。启动读回不替代运行中通知响应；测试后还原为运行前的系统设置。
 
 原始 xcresult、日志和截图放在被忽略的 `.local/`；不上传本机路径和设备标识。界面预览、测试断言、视觉审阅和真实辅助技术证据分别记录。
+
+
+`GalleryMinimumWindowTests` 是改变真实系统窗口的可选测试，仅在独占的 iPad 模拟器上设置测试运行器环境 `RHINE_WINDOW_RESIZE=1` 后执行。先将系统设为最大辅助字号、Dark / Increased Contrast、两项减少偏好 On；测试读回真实值，不使用启动字号覆盖。两次向内拖动系统手柄并核对尺寸下界，再分段检查长错误末尾、保存失败保留字段与重试成功。单用例有界 360 秒；原始超时和不同修订的结果分别保留。未提供前提时 SKIPPED，不算通过。
