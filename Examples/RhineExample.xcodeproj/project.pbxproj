@@ -8,11 +8,19 @@
 
 /* Begin PBXBuildFile section */
 		00617FA8569668B5DD676128 /* RhineDesign in Frameworks */ = {isa = PBXBuildFile; productRef = E22B7E78561C375E07ECD461 /* RhineDesign */; };
+		0DA8DA5F9C826DA778809DF9 /* ButtonsPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 728D5A6B582BE8AB225FB3C4 /* ButtonsPage.swift */; };
+		2453F62FCA23542EE2E5FB30 /* FormsPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECA38B171AEC9D61C80BD98 /* FormsPage.swift */; };
 		3C916D51878979CA24CF87CD /* NativeColorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FEE85AC039711A43836A642 /* NativeColorTests.swift */; };
+		6B18A15B89B34080F6113E9F /* GalleryInteractionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2C2153986F2A7C771528490 /* GalleryInteractionTests.swift */; };
 		9C915FD4295A0DDA252DDBE8 /* FoundationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9933EE68DF800FC158E25AD6 /* FoundationViewController.swift */; };
+		9EEE56CC0AEE59538CEF8C16 /* OverviewPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC62A961A9903F0FEF843ED0 /* OverviewPage.swift */; };
+		A833216E833C94B159A8BAB9 /* ComponentBehaviorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0970DA2D6E0F37388F5015D2 /* ComponentBehaviorTests.swift */; };
+		B775E09A28F153778CF44B27 /* GallerySupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73F4B190AD628EE15BFE03B0 /* GallerySupport.swift */; };
 		C3284D4C8D7CF5D159258EA6 /* FoundationConsumptionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73C0018EBC9A32D19EF60ADC /* FoundationConsumptionTests.swift */; };
+		C46B1781DA145534BB0F7FA3 /* SystemEnvironmentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54A8910896711B88041568F8 /* SystemEnvironmentTests.swift */; };
 		CA933A3C96DB82A1506CAAD9 /* RhineDesign in Frameworks */ = {isa = PBXBuildFile; productRef = 48FFCD56CCF7373923FF7103 /* RhineDesign */; };
 		E36CE4E5BF7FF169257FC791 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC45F37B6440A96EE5C79501 /* AppDelegate.swift */; };
+		FA98CBA1EEE30F30E787D650 /* StatesPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB43309AC5F503788AF0BAB9 /* StatesPage.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -23,15 +31,30 @@
 			remoteGlobalIDString = 8F387D8056DA81173CD46E8B;
 			remoteInfo = RhineExample;
 		};
+		68563E38669689C47D975DA3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BDA10B6E6956B2AD3E87287D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8F387D8056DA81173CD46E8B;
+			remoteInfo = RhineExample;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0970DA2D6E0F37388F5015D2 /* ComponentBehaviorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComponentBehaviorTests.swift; sourceTree = "<group>"; };
+		0C80FFEA83287E5B04C98D64 /* ios */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ios; path = ..; sourceTree = SOURCE_ROOT; };
 		3C3FC3805EDB274878F1B1E3 /* RhineExample.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = RhineExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		54A8910896711B88041568F8 /* SystemEnvironmentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemEnvironmentTests.swift; sourceTree = "<group>"; };
+		728D5A6B582BE8AB225FB3C4 /* ButtonsPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonsPage.swift; sourceTree = "<group>"; };
 		73C0018EBC9A32D19EF60ADC /* FoundationConsumptionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoundationConsumptionTests.swift; sourceTree = "<group>"; };
+		73F4B190AD628EE15BFE03B0 /* GallerySupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GallerySupport.swift; sourceTree = "<group>"; };
 		8B23822B0D77FC020AEF702D /* RhineDesignTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = RhineDesignTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8FEE85AC039711A43836A642 /* NativeColorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeColorTests.swift; sourceTree = "<group>"; };
 		9933EE68DF800FC158E25AD6 /* FoundationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoundationViewController.swift; sourceTree = "<group>"; };
-		CEF31E97B6AF1D6E213DC84B /* rhine-design-ios */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "rhine-design-ios"; path = ..; sourceTree = SOURCE_ROOT; };
+		A2C2153986F2A7C771528490 /* GalleryInteractionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryInteractionTests.swift; sourceTree = "<group>"; };
+		DB43309AC5F503788AF0BAB9 /* StatesPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatesPage.swift; sourceTree = "<group>"; };
+		EC62A961A9903F0FEF843ED0 /* OverviewPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverviewPage.swift; sourceTree = "<group>"; };
+		EECA38B171AEC9D61C80BD98 /* FormsPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormsPage.swift; sourceTree = "<group>"; };
 		F835FB40464254B5A7010406 /* RhineExampleUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = RhineExampleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FC45F37B6440A96EE5C79501 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -70,7 +93,7 @@
 		4C77848C5A86B71FDF53A557 /* Packages */ = {
 			isa = PBXGroup;
 			children = (
-				CEF31E97B6AF1D6E213DC84B /* rhine-design-ios */,
+				0C80FFEA83287E5B04C98D64 /* ios */,
 			);
 			name = Packages;
 			sourceTree = "<group>";
@@ -89,6 +112,8 @@
 			isa = PBXGroup;
 			children = (
 				73C0018EBC9A32D19EF60ADC /* FoundationConsumptionTests.swift */,
+				A2C2153986F2A7C771528490 /* GalleryInteractionTests.swift */,
+				54A8910896711B88041568F8 /* SystemEnvironmentTests.swift */,
 			);
 			path = RhineExampleUITests;
 			sourceTree = "<group>";
@@ -97,7 +122,12 @@
 			isa = PBXGroup;
 			children = (
 				FC45F37B6440A96EE5C79501 /* AppDelegate.swift */,
+				728D5A6B582BE8AB225FB3C4 /* ButtonsPage.swift */,
+				EECA38B171AEC9D61C80BD98 /* FormsPage.swift */,
 				9933EE68DF800FC158E25AD6 /* FoundationViewController.swift */,
+				73F4B190AD628EE15BFE03B0 /* GallerySupport.swift */,
+				EC62A961A9903F0FEF843ED0 /* OverviewPage.swift */,
+				DB43309AC5F503788AF0BAB9 /* StatesPage.swift */,
 			);
 			path = RhineExample;
 			sourceTree = "<group>";
@@ -105,6 +135,7 @@
 		FEBE56D74961724F49C5C935 /* RhineDesignTests */ = {
 			isa = PBXGroup;
 			children = (
+				0970DA2D6E0F37388F5015D2 /* ComponentBehaviorTests.swift */,
 				8FEE85AC039711A43836A642 /* NativeColorTests.swift */,
 			);
 			name = RhineDesignTests;
@@ -124,6 +155,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				02F2FCFB8AACA71EB5517024 /* PBXTargetDependency */,
 			);
 			name = RhineDesignTests;
 			packageProductDependencies = (
@@ -214,6 +246,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				C3284D4C8D7CF5D159258EA6 /* FoundationConsumptionTests.swift in Sources */,
+				6B18A15B89B34080F6113E9F /* GalleryInteractionTests.swift in Sources */,
+				C46B1781DA145534BB0F7FA3 /* SystemEnvironmentTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -221,6 +255,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A833216E833C94B159A8BAB9 /* ComponentBehaviorTests.swift in Sources */,
 				3C916D51878979CA24CF87CD /* NativeColorTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -230,13 +265,23 @@
 			buildActionMask = 2147483647;
 			files = (
 				E36CE4E5BF7FF169257FC791 /* AppDelegate.swift in Sources */,
+				0DA8DA5F9C826DA778809DF9 /* ButtonsPage.swift in Sources */,
+				2453F62FCA23542EE2E5FB30 /* FormsPage.swift in Sources */,
 				9C915FD4295A0DDA252DDBE8 /* FoundationViewController.swift in Sources */,
+				B775E09A28F153778CF44B27 /* GallerySupport.swift in Sources */,
+				9EEE56CC0AEE59538CEF8C16 /* OverviewPage.swift in Sources */,
+				FA98CBA1EEE30F30E787D650 /* StatesPage.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		02F2FCFB8AACA71EB5517024 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8F387D8056DA81173CD46E8B /* RhineExample */;
+			targetProxy = 68563E38669689C47D975DA3 /* PBXContainerItemProxy */;
+		};
 		CFE3D59DF00FF2CB724BD795 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 8F387D8056DA81173CD46E8B /* RhineExample */;
@@ -332,6 +377,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = io.github.linhay.rhinedesign.tests;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RhineExample.app/RhineExample";
 			};
 			name = Release;
 		};
@@ -340,7 +386,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				INFOPLIST_KEY_CFBundleDisplayName = "Rhine Foundation";
+				INFOPLIST_KEY_CFBundleDisplayName = "Rhine Gallery";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -360,7 +406,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				INFOPLIST_KEY_CFBundleDisplayName = "Rhine Foundation";
+				INFOPLIST_KEY_CFBundleDisplayName = "Rhine Gallery";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -453,6 +499,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = io.github.linhay.rhinedesign.tests;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RhineExample.app/RhineExample";
 			};
 			name = Debug;
 		};

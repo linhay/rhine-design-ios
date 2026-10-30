@@ -1,5 +1,7 @@
 # 独立 iOS 设计规范
 
+检索颜色、组件、样例与证据时，先读[UIKit 设计体系导航](README.md)。本页维护平台决定；数值、API 与运行结果分别在 Tokens、Components 和 Validation 中维护。
+
 > 当前主框架为 **UIKit**，依据[用户明确纠正](https://github.com/linhay/rhine-design/issues/34#issuecomment-6419860390)（2026-10-26）。此前 SwiftUI 主方案及其控件映射已被取代；SwiftUI 只可作为未来另行评估的可选消费适配，不是首批依赖。
 
 确认依据：[方案 v1](https://github.com/linhay/rhine-design/issues/34#issuecomment-6410947901) 与 [维护者确认](https://github.com/linhay/rhine-design/issues/34#issuecomment-6410983498)，2026-10-26。设计规则已确认；实现和运行验收状态另见 [Validation](Validation.md)。
@@ -19,6 +21,12 @@ iOS 的规范、tokens、原生实现、样例、版本和验收独立于 Web/Re
 | D09 职责与承接 | 当前维护侧负责 #34 整合，原生资料侧负责设计审阅，维护者负责最终范围确认；#35/#36 开工时明确实施与验收负责人 | 当前 issues 保留为权威入口。独立仓库就绪后记录双向链接与唯一承接位置，再决定迁移；不在两处维持相互冲突的任务。 |
 
 规范入口：`docs/DesignSystem.md`、`docs/Tokens.md`、`docs/Components.md`、`docs/Validation.md`；README 链接这些入口。本仓库规范与原 issue 共同保留决定依据；任务以原 issue 为权威入口。
+
+## 任务与复核
+
+设计任务先明确主要用途：操作界面保持动作、真实状态和恢复路径清楚；阅读界面保持内容与阅读位置连续；品牌表达只在需求开放时探索。先在原任务说明中列出必须可见的事实、必须完成的动作和失败/退出路径，再复用现有 UIKit 能力。评审先功能与恢复，后层级、冗余和连续性；不追加统一主题、外部字体、动画数量目标或第二套 tokens。
+
+上述是工作方法，不改变 D01–D09。原生动作、Dynamic Type、Auto Layout 与系统辅助功能按[验收计划](Validation.md#按变化优先验证)检查；Web 配方、CSS 数值与 DOM 检测结果均不能替代原生依据。
 
 ## 平台依据
 

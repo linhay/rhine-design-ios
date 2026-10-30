@@ -1,0 +1,58 @@
+# Rhine Gallery
+
+Rhine Design 的可交互 UIKit 展示项目。使用本地 `RhineDesign` Swift Package 的公开组件，支持 iPhone 和 iPad，所有数据和任务均为合成演示，无登录、网络服务或真实权限请求。
+
+## 打开与运行
+
+用 Xcode 27.1 打开 `RhineExample.xcodeproj`，选择 `RhineExample` scheme 和已安装的 iOS Simulator，运行即可。工程已提交，无需先安装 XcodeGen；新增文件或修改 `project.yml` 时才需在源码仓根运行 `xcodegen generate --spec Examples/project.yml`。目标最低系统 17.0；实际验证范围见 [Validation](../docs/Validation.md)，不将部署目标当作全部系统均已测试。
+
+验收复用已有安装时，先核对实际源码清单与构建制品，再比较已安装 App 的主二进制及 `*.debug.dylib`（如存在）的 SHA-256。只匹配主二进制不足以证明实现一致；仅执行 build 不会替换设备安装。发现不匹配时，安装指定构建并重新执行受影响的检查，旧观察保留但不能归入当前候选通过证据。
+
+需要长期保留 XCTest 截图与结果包时，确认执行工具是否自动清理临时 `xcresult`。本机 XcodeBuildMCP `test_sim` 自动添加 `-resultBundlePath`，不要在 `extraArgs` 重复传入；成功摘要不等于结果包仍可读取。若工具清理了结果包，可对同一已构建测试制品执行有界 `xcodebuild test-without-building`，指定 `.local/` 结果路径并保存日志；分开记录两次执行，重新核对制品摘要。
+
+## 四个展示分区
+
+| 分区 | 可核对内容 | 操作 |
+| --- | --- | --- |
+| 总览 | 系统动态颜色、文字层级、中英长文、间距、最小触控范围 | 从组件手册进入各区；查看基础环境页 |
+| 按钮 | primary / secondary / plain、破坏性、禁用、忙碌、图文、长标题 | 开始任务 → 手动成功/失败 → 重试；观察激活计数 |
+| 表单 | 单行文字、email、URL、安全输入、开关、静态单选、说明与错误 | 编辑 → 清空必填 → 保存校验 → 填入有效示例 → 保存失败 → 重试成功；取消可继续编辑或放弃 |
+| 状态 | 尚无内容、无匹配、加载、失败、权限说明、已有内容 | 下拉选择场景；添加收藏、清除筛选、重试、模拟授权均改变真实的本地状态；可打开长说明 |
+
+右上角 **预览** 提供跟随系统/浅色/深色、标准/特大/最大辅助字号和 320pt 内容上限。预览只作用于 App，不修改设备全局设置；非系统预览会在页面标注，并可一键恢复跟随系统。提高对比度、减少透明度和减少动态仍读取系统偏好。预览不是系统设置切换或真实 VoiceOver 验收。
+
+表单将草稿保存在编辑器中，提交时锁定快照并禁用编辑和退出，失败保留内容，成功才更新父页面并关闭。密码不写入保存后的资料，也不存入 UserDefaults/Keychain。只有宿主负责合成规则与任务结果，公共字段不包含业务校验。
+
+配置与凭据分别保存的产品可参考[双服务宿主组合约定](../docs/Components.md#配置与凭据由独立服务保存时的宿主组合)。当前表单未实现部分成功、未知写入或版本冲突的合成配方；现有单次保存演示不证明这些产品行为，也不提供凭据管理服务。
+
+## 诊断与测试入口
+
+- `--foundation-diagnostics`：启动原基础环境页，保留 #35 的原生诊断路径。
+- `--preview-narrow-content`：仅基础诊断页的 320pt 内容上限。
+- `--gallery-tab=0` 到 `--gallery-tab=3`：直接进入一个展示分区，供复现和 UI 测试使用。
+- `GalleryInteractionTests`：展示导航、预览、重复提交门禁、表单校验/失败保留/取消/成功、空状态恢复、大字体可达性。
+- `ComponentBehaviorTests`：按钮点击与辅助激活共用门禁、字段状态不丢输入、宿主更新不产生伪用户事件、无回调不呈现空动作。
+- `SystemEnvironmentTests`：显式配置模拟器后检查 App 实际读取的外观、对比度、减少动态和减少透明度。未提供四个预期值时标记 SKIPPED，不能计为通过。
+
+键盘回归点击真实软件键盘的 Next/Done，再通过输入后的字段值确认焦点移动；同时要求字母键和当前字段可命中。连接硬件键盘、仅存在 Keyboard 元素或注入换行不代表软件键盘遮挡验证通过。
+
+系统环境用例从测试运行器环境接收预期值。例如，将目标模拟器实际配置为浅色、标准对比度、关闭减少动态与透明度后，从源码仓运行：
+
+```sh
+TEST_RUNNER_RHINE_EXPECT_APPEARANCE=Light \
+TEST_RUNNER_RHINE_EXPECT_CONTRAST=Standard \
+TEST_RUNNER_RHINE_EXPECT_MOTION=Off \
+TEST_RUNNER_RHINE_EXPECT_TRANSPARENCY=Off \
+xcodebuild -project Examples/RhineExample.xcodeproj -scheme RhineExample \
+  -destination 'platform=iOS Simulator,name=<目标模拟器名称>' \
+  -parallel-testing-enabled NO \
+  -resultBundlePath .local/system-environment.xcresult \
+  -only-testing:RhineExampleUITests/SystemEnvironmentTests test
+```
+
+有效预期分别为 `Light/Dark`、`Standard/Increased`、`Off/On`、`Off/On`。测试只读真实系统值，不配置偏好或覆盖 traits。启动读回不替代运行中通知响应；测试后还原为运行前的系统设置。
+
+原始 xcresult、日志和截图放在被忽略的 `.local/`；不上传本机路径和设备标识。界面预览、测试断言、视觉审阅和真实辅助技术证据分别记录。
+
+
+`GalleryMinimumWindowTests` 是改变真实系统窗口的可选测试，仅在独占的 iPad 模拟器上设置测试运行器环境 `RHINE_WINDOW_RESIZE=1` 后执行。先将系统设为最大辅助字号、Dark / Increased Contrast、两项减少偏好 On；测试读回真实值，不使用启动字号覆盖。两次向内拖动系统手柄并核对尺寸下界，再分段检查长错误末尾、保存失败保留字段与重试成功。单用例有界 360 秒；原始超时和不同修订的结果分别保留。未提供前提时 SKIPPED，不算通过。
