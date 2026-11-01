@@ -2,6 +2,10 @@
 
 ## Unreleased — 0.1.0 target
 
+- Add the UIKit component gallery with four navigable sections, appearance/type/content-width previews, and deterministic button, form and content-state interactions.
+- Add public RhineButton, RhineTextField, RhineToggle, RhineChoice and RhineEmptyState candidates; the example owns validation, save outcomes and draft lifecycle. Preserve the standalone foundation diagnostic entry.
+- User-requested full gallery work proceeds independently from remaining foundation runtime validation; implementation is not a completed release or platform acceptance.
+
 - Correct the primary framework to UIKit following the maintainer's explicit direction; the former SwiftUI-first proposal is superseded.
 
 - Confirm independent iOS design rules, platform baseline, semantic tokens and first component contracts in [#34](https://github.com/linhay/rhine-design/issues/34).
