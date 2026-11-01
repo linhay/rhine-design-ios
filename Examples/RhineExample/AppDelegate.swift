@@ -18,7 +18,9 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = scene as? UIWindowScene else { return }
         let window = UIWindow(windowScene: windowScene)
-        if ProcessInfo.processInfo.arguments.contains("--foundation-diagnostics") {
+        if ProcessInfo.processInfo.arguments.contains("--agent-session") {
+            window.rootViewController = UINavigationController(rootViewController: AgentSessionViewController())
+        } else if ProcessInfo.processInfo.arguments.contains("--foundation-diagnostics") {
             window.rootViewController = UINavigationController(rootViewController: FoundationViewController())
         } else {
             window.rootViewController = GalleryController()

@@ -32,7 +32,7 @@ targets:
   RhineDesignTests:
     type: bundle.unit-test
     platform: iOS
-    sources: [../Tests/RhineDesignTests]
+    sources: [../Tests/RhineDesignTests, RhineExampleModelTests]
     dependencies:
       - target: RhineExample
       - package: RhineDesign
